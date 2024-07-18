@@ -43,14 +43,22 @@ class DataField(str, enum.Enum):
     
 class TradeAction(enum.Enum):
     NONE              = ""
-    BUY_TO_OPEN       = "BUY_TO_OPEN"            # buy new lots
+    BUY               = "BUY"                   # Buy shares
+    SELL              = "SELL"                  # Sell shares
+    BUY_TO_CLOSE_ALL  = "BUY_TO_CLOSE_ALL"      # Buy back all short positions
+    SELL_TO_CLOSE_ALL = "SELL_TO_CLOSE_ALL"     # Sell all long positions
+
+    # the following are more for options
+    BUY_TO_OPEN       = "BUY_TO_OPEN"           # buy new lots
     SELL_TO_OPEN      = "SELL_TO_OPEN"          # sell new lots
-    BUY_TO_CLOSE_100  = "BUY_TO_CLOSE_100"  # buy to close follow by a possible percent (100 means all)
-    BUY_TO_CLOSE_50   = "BUY_TO_CLOSE_50"    # buy to close half
-    BUY_TO_CLOSE_25   = "BUY_TO_CLOSE_25"    # buy to close a quarter
-    SELL_TO_CLOSE_100 = "SELL_TO_CLOSE_100"    # sell all existing long position
-    SELL_TO_CLOSE_50  = "SELL_TO_CLOSE_50"    # sell all existing long position
-    SELL_TO_CLOSE_20  = "SELL_TO_CLOSE_100"    # sell all existing long position    
+    BUY_TO_CLOSE      = "BUY_TO_CLOSE"          # buy to close all existing lots
+    SELL_TO_CLOSE     = "SELL_TO_CLOSE"         # sell all existing long position
+    
+    # the following are for buying and selling shares without specifying the number of shares
+    BUY_TO_CLOSE_50   = "BUY_TO_CLOSE_50"       # buy to close half
+    BUY_TO_CLOSE_25   = "BUY_TO_CLOSE_25"       # buy to close a quarter
+    SELL_TO_CLOSE_50  = "SELL_TO_CLOSE_50"      # sell 50 percent
+    SELL_TO_CLOSE_25  = "SELL_TO_CLOSE_25"      # sell quarter position
 
 class TradeSignal(enum.Enum):
     SHORT = -1
@@ -67,7 +75,10 @@ class RiskAllocation(enum.Enum):
     FIXED_DOLLAR = "FIXED_DOLLAR"
     EQUAL_RISK = "EQUAL_RISK"
     
-    
+
+class DisposalMethod(enum.Enum):
+    FIFO = "FIFO"
+    LIFO = "LIFO"
     
 def get_index():
     return ['S&P 500', 'NASDAQ 100', 'DJIA', 'RUSSELL 2000']

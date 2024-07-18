@@ -1,0 +1,11 @@
+
+
+   def run_model(self):
+
+
+
+       if dm[i + 10] > dm[i]:
+           tsignal = 1
+       elif dm[i + 10] < dm[i]:
+           tsignal = -1
+           

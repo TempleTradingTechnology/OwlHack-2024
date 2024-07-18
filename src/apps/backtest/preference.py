@@ -53,7 +53,8 @@ def get_default_parser():
     parser.add_argument('--end_date', dest='end_date', default="2020-01-01", help='end date (YYYY-MM-DD)')
     parser.add_argument('--tickers', dest='tickers', default=None, help='Tickers with | separator')
 
-    parser.add_argument('--data_dir', dest = 'data_dir', default="C:/test/daily", help='data dir')
+    parser.add_argument('--data_dir', dest = 'data_dir', default="../../../data", help='data dir')
+    parser.add_argument('--output_dir', dest = 'output_dir', default="../../output", help='output dir')    
     
     return(parser)
             

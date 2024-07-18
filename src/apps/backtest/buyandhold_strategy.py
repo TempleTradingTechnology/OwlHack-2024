@@ -66,7 +66,7 @@ class BuyAndHoldStrategy(Strategy):
         # sell at the end
         tsignal.iloc[-1, :] = -1 # sell
         shares.iloc[-1] = shares.iloc[0]
-        taction.iloc[-1, :] = cm.TradeAction.SELL_TO_CLOSE_100
+        taction.iloc[-1, :] = cm.TradeAction.SELL_TO_CLOSE_100.value
         
         return(tsignal, taction, shares)
     
@@ -100,7 +100,7 @@ def _test1():
         buyandhold.run_strategy()
         print(buyandhold.performance)
     
-        output_fname = f"C:/test/model_data/buyandhold_{weigh_scheme.value}"
+        output_fname = f"../../buyandhold_{weigh_scheme.value}"
         buyandhold.save_to_csv(output_fname)
     
 def _test():
