@@ -6,6 +6,7 @@ Class to model user preferences
 import os
 import getpass
 import argparse
+from pprint import pprint 
 
 
 class Preference(object):
@@ -13,10 +14,15 @@ class Preference(object):
     '''
     Storing user preference as attribute.
     '''
+
+    _file_dir = os.path.dirname(os.path.realpath(__file__))
+
     _default_option = { 'environ': 'dev', 'verbose': False,
                         'start_date': None, 'end_date': None, 
-                        'data_dir': "C:/test/daily",
-                        'user': getpass.getuser(),
+                        'data_root_dir': os.path.join(_file_dir, '../../../data'),
+                        'train_data_dir': os.path.join(_file_dir, '../../../data/train'),
+                        'test_data_dir': os.path.join(_file_dir, '../../../data/test'),                        
+                        'test_output_dir': os.path.join(_file_dir, '../../tests/output'),
                         'tickers': None, 'port_name': None,
                        }
 
@@ -24,22 +30,23 @@ class Preference(object):
 
         self.name = name
         self.user = user
-        self.cli_args = cli_args
-        self.cli_dict = vars(cli_args) if cli_args is not None else {}
-        
+
         # set defaults
         for k, v in Preference._default_option.items():
             setattr(self, k, v)
 
-        for k, v in self.cli_dict.items():
-            print(k, v)
-            setattr(self, k, v)
+        # set from CLI
+        if cli_args is not None:
+            for k, v in vars(cli_args).items():
+                setattr(self, k, v)
 
         if self.name is None:
             self.name = 'standard'
             
         if self.user is None:
             self.user = getpass.getuser()
+
+            
 
 
 def get_default_parser():
@@ -53,28 +60,30 @@ def get_default_parser():
     parser.add_argument('--end_date', dest='end_date', default="2020-01-01", help='end date (YYYY-MM-DD)')
     parser.add_argument('--tickers', dest='tickers', default=None, help='Tickers with | separator')
 
-    parser.add_argument('--data_dir', dest = 'data_dir', default="../../../data", help='data dir')
-    parser.add_argument('--output_dir', dest = 'output_dir', default="../../output", help='output dir')    
+    parser.add_argument('--data_dir', dest = 'data_dir', default=None, help='data dir')
+    parser.add_argument('--output_dir', dest = 'output_dir', default=None, help='output dir')    
     
     return(parser)
+
             
-def _test():
+def _test1():
+    # test default
+    pref = Preference()
+    pprint(vars(pref))
+
+    pref = Preference(name = "yahoo applicaiton",  user = "John Doe")
+    pprint(vars(pref))
 
     parser = get_default_parser()
     parser.add_argument('--foo', dest='foo', default = 'whatever', help='a parameter')
     parser.add_argument('--apikey', dest='api_key_file', help='a parameter')        
-
     args = parser.parse_args()
     
-    pref = Preference(cli_args = args)
-    print (pref.name, pref.user, pref.force, pref.start_date, pref.foo, pref.api_key_file)
+    pref = Preference(name = "from cli", cli_args = args)
+    pprint(vars(pref))
 
-    
-    pref = Preference()
-    print (pref.name, pref.user, pref.force, pref.start_date, pref.tickers)
-
-    pref = Preference(name = "yahoo applicaiton",  user = "John Doe")
-    print (pref.name, pref.user, pref.force, pref.start_date, pref.tickers)
+def _test():
+    _test1()
     
     
 

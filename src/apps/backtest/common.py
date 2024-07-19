@@ -12,6 +12,7 @@ OneHundredThousand = 100000.0
 OneMillion = 1000000.0
 
 
+
 class TimeFrame(enum.Enum):
 
     DAILY = 'Daily'

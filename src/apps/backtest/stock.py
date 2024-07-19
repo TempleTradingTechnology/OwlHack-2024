@@ -58,8 +58,18 @@ class Stock(object):
 
 def _test1():
 
-    pref = preference.get_default_parser()
-    data_dir = "C:/test/daily"
+    parser = preference.get_default_parser()
+    args = parser.parse_args()
+
+    pref = preference.Preference(cli_args = args)
+
+    if pref.data_dir is not None:
+        data_dir = pref.data_dir
+    else:
+        data_dir = os.path.join(pref.data_root_dir, "train")
+        
+    print(f"Loading from data dir: {data_dir}")
+    
     loader = DataLoader(pref, data_dir = data_dir)
 
     start_date = datetime.date(2010, 1, 1)

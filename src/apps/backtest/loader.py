@@ -26,16 +26,19 @@ class DataLoader(object):
         self.data_src = data_src
         self.db_connection = db_connection
         if data_dir is None:
-            self.data_dir = self.pref.data_dir
+            self.data_dir = self.pref.train_data_dir
         else:
             self.data_dir = data_dir
         
-    
+        
     def get_daily_hist_price(self, ticker, start_date = None, end_date = None):
+        
         fname = os.path.join(self.data_dir, f"{ticker}_daily.csv")
+        if not os.path.exists(fname):
+            fname = os.path.join(self.data_dir, f"{ticker}.csv")
         df = pd.read_csv(fname)
 
-        df['Date'] = df['Date'].apply(lambda x: datetime.datetime.strptime(x, '%Y-%m-%d').date())
+        df['Date'] = df['Date'].apply(lambda x: datetime.datetime.strptime(x[:10], '%Y-%m-%d').date())
         
         if start_date is not None:
             df = df[df['Date'] >= start_date]
@@ -48,13 +51,16 @@ class DataLoader(object):
 
 def _test1():
 
+    from pprint import pprint
     print('Running test1')
-    pref = preference.get_default_parser()
-    data_dir = "C:/test/daily"
-    loader = DataLoader(pref, data_dir = data_dir)
+    pref = preference.Preference()
+    #pprint(vars(pref))
+    
+    loader = DataLoader(pref, data_dir = pref.train_data_dir)
 
     df = loader.get_daily_hist_price('AAPL')
     print(df.head())
+    print(df.tail())
 
                
     

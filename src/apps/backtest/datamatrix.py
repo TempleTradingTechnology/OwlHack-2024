@@ -2,6 +2,7 @@
 Class to manage data set for a list of stocks and for a time period
 '''
 
+import os
 import datetime
 import pandas as pd
 
@@ -124,7 +125,9 @@ class DataMatrixLoader(DataLoader):
 
 def _test1():
 
-    fname = "C:/test/daily/AAPL_daily.csv"
+    print('Running Test1')
+    pref = preference.Preference()
+    fname = os.path.join(pref.data_root_dir, 'train/AAPL.csv')
     df = pd.read_csv(fname)
 
     dm = DataMatrix(df, name = 'test', universe = ['AAPL', 'COST'])
