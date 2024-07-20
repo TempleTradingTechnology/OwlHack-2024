@@ -8,6 +8,7 @@ import getpass
 import argparse
 from pprint import pprint 
 
+import common as cm
 
 class Preference(object):
 
@@ -21,7 +22,8 @@ class Preference(object):
                         'start_date': None, 'end_date': None, 
                         'data_root_dir': os.path.join(_file_dir, '../../../data'),
                         'train_data_dir': os.path.join(_file_dir, '../../../data/train'),
-                        'test_data_dir': os.path.join(_file_dir, '../../../data/test'),                        
+                        'test_data_dir': os.path.join(_file_dir, '../../../data/test'),
+                        'meta_data_dir': os.path.join(_file_dir, '../../../data/meta'),
                         'test_output_dir': os.path.join(_file_dir, '../../tests/output'),
                         'tickers': None, 'port_name': None,
                        }
@@ -46,7 +48,11 @@ class Preference(object):
         if self.user is None:
             self.user = getpass.getuser()
 
-            
+        # convert str to date object
+        if self.start_date is not None:
+            self.start_date = cm.parse_date_str(self.start_date)
+        if self.end_date is not None:
+            self.end_date = cm.parse_date_str(self.end_date)
 
 
 def get_default_parser():

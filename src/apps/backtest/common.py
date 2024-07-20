@@ -2,6 +2,7 @@
 Misc utilites
 '''
 
+import os
 import datetime
 import enum
 import numpy as np
@@ -11,7 +12,7 @@ OneThousand = 1000.0
 OneHundredThousand = 100000.0
 OneMillion = 1000000.0
 
-
+# should not depend on other library
 
 class TimeFrame(enum.Enum):
 
@@ -82,10 +83,11 @@ class DisposalMethod(enum.Enum):
     LIFO = "LIFO"
     
 def get_index():
-    return ['S&P 500', 'NASDAQ 100', 'DJIA', 'RUSSELL 2000']
+    return ['S&P 500', 'NASDAQ 100', 'DJIA', 'RUSSELL 2000', 'OwlHack 2024 Universe']
 
 def get_ETF_by_index(index):
-    _map = {'S&P 500': 'SPY', 'NASDAQ 100': 'QQQ', 'DJIA': 'DIA', 'RUSSELL 2000': 'IWM'}
+    _map = {'S&P 500': 'SPY', 'NASDAQ 100': 'QQQ', 'DJIA': 'DIA', 'RUSSELL 2000': 'IWM',
+            'OwlHack 2024 Universe': 'SPY'}
     return _map[index]
 
     
@@ -98,6 +100,17 @@ def get_industry():
     # to be determined
     return []
 
+def get_index_components(index, meta_data_dir):
+    fname = os.path.join(meta_data_dir, index.replace(' ', '') + '.txt')
+    df = pd.read_csv(fname)
+    return(df['Ticker'].tolist())
+
+def parse_date_str(txt):
+    try:
+        dt = datetime.datetime.strptime(txt, "%Y-%m-%d").date()
+    except:
+        dt = datetime.datetime.strptime(txt, "%m/%d/%Y").date()
+    return(dt)
 
 def calculate_sharpe_ratio(daily_returns, risk_free_rate):
     # Calculate average daily return
@@ -136,8 +149,6 @@ def _test():
     equity_values = [100, 110, 105, 95, 100, 90, 100, 110]
     max_dd = calculate_max_drawdown(equity_values)
     print(f"Maximum Drawdown: {max_dd:.2%}")
-
-
 
 if __name__ == "__main__":
     _test()

@@ -2,6 +2,7 @@
 Class to model a strategy
 '''
 
+import os
 import pandas as pd
 import common as cm
 from datamatrix import DataMatrix
@@ -139,17 +140,17 @@ class Strategy(object):
         pass
     
 
-    def save_to_csv(self, filename_root):
+    def save_to_csv(self, output_dir):
         '''
         Save strategy output to csv file
         '''
-        self.input_dm.to_csv(filename_root + "_data.csv")
-        self.pricing_matrix.to_csv(filename_root + "_prices.csv")    
-    
-        self.taction.to_csv(filename_root + "_taction.csv")
-        self.tsignal.to_csv(filename_root + "_tsignal.csv")    
-        self.shares.to_csv(filename_root + "_shares.csv")
-        self.current_holding.to_csv(filename_root + "_holding.csv")
+        fname = self.name.replace(' ', '')
+        self.input_dm.to_csv(os.path.join(output_dir, f"{fname}_data.csv"))
+        self.pricing_matrix.to_csv(os.path.join(output_dir, f"{fname}_prices.csv"))
+        self.taction.to_csv(os.path.join(output_dir,  f"{fname}_taction.csv"))
+        self.tsignal.to_csv(os.path.join(output_dir, f"{fname}_tsignal.csv"))    
+        self.shares.to_csv(os.path.join(output_dir, f"{fname}_shares.csv"))
+        self.current_holding.to_csv(os.path.join(output_dir, f"{fname}_holding.csv"))
         
-        self.pnl.to_csv(filename_root + "_pnl.csv")
+        self.pnl.to_csv(os.path.join(output_dir, f"{fname}_pnl.csv"))
     

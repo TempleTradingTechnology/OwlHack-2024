@@ -15,7 +15,7 @@ class BuyAndHoldStrategy(Strategy):
         
     def __init__(self, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, slippage = 0.0,
                  weighing_scheme = cm.WeighingScheme.EqualDollarExposure):
-        super().__init__('Buy and Hold ', input_datamatrix, initial_capital, price_choice)
+        super().__init__(f'Buy and Hold_{weighing_scheme.value}', input_datamatrix, initial_capital, price_choice)
         self.weighing_scheme = weighing_scheme
         self.pricing_matrix = self.input_dm.extract_price_matrix().copy()
 
@@ -100,9 +100,7 @@ def _test1():
         buyandhold.run_strategy()
         print(buyandhold.performance)
     
-        output_fname = f"../../tests/output/buyandhold_{weigh_scheme.value}"
-        print(f"save output to {output_fname}")
-        buyandhold.save_to_csv(output_fname)
+        buyandhold.save_to_csv(pref.test_output_dir)
     
 def _test():
     _test1()

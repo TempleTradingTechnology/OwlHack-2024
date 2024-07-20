@@ -25,11 +25,11 @@ class DataMatrix(pd.DataFrame):
 
     def __init__(self, *args, **kwargs):
         _name = kwargs.pop('name', None)
-        _universe = kwargs.pop('universe', None)
+        _temp = kwargs.pop('universe', None)
         _timeframe = kwargs.pop('timeframe', cm.TimeFrame.DAILY)
         super().__init__(*args, **kwargs)
         self._name = _name
-        self._universe = _universe
+        self._universe = _temp
         self._timeframe = _timeframe
 
     @property
