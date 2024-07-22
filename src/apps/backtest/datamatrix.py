@@ -127,10 +127,10 @@ def _test1():
 
     print('Running Test1')
     pref = preference.Preference()
-    fname = os.path.join(pref.data_root_dir, 'train/AAPL.csv')
+    fname = os.path.join(pref.data_root_dir, 'train/AWO.csv')
     df = pd.read_csv(fname)
 
-    dm = DataMatrix(df, name = 'test', universe = ['AAPL', 'COST'])
+    dm = DataMatrix(df, name = 'test', universe = ['AWO', 'BDJ'])
     print(dm.get_info())
     print(dm.head())
 
@@ -148,7 +148,7 @@ def _test2():
 
     pref = preference.Preference(cli_args = args)
 
-    universe = ['AAPL', 'COST', 'NVDA']
+    universe = ['AWO', 'BDJ', 'BDTC']
     start_date = datetime.date(2010, 1, 1)
     end_date = datetime.date(2022, 1, 1)
 

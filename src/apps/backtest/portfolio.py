@@ -244,32 +244,32 @@ def _test1():
     d9 = datetime.date(2020, 9, 1)                
     
     trades1 = [ \
-                ('AAPL', cm.TradeAction.BUY, d3, 105, 500),
-                ('AAPL', cm.TradeAction.SELL_TO_CLOSE_ALL, d4, 108, None),
+                ('AWO', cm.TradeAction.BUY, d3, 105, 500),
+                ('AWO', cm.TradeAction.SELL_TO_CLOSE_ALL, d4, 108, None),
 
-                ('AAPL', cm.TradeAction.BUY, d5, 100, 1000),
-                ('AAPL', cm.TradeAction.SELL_TO_CLOSE_50, d6, 110, None),
-                ('AAPL', cm.TradeAction.SELL_TO_CLOSE_ALL, d7, 120, None),                                
+                ('AWO', cm.TradeAction.BUY, d5, 100, 1000),
+                ('AWO', cm.TradeAction.SELL_TO_CLOSE_50, d6, 110, None),
+                ('AWO', cm.TradeAction.SELL_TO_CLOSE_ALL, d7, 120, None),                                
                 
                ]
 
     trades2 = [ \
-                ('NVDA', cm.TradeAction.SELL, d3, 105, 500),
-                ('NVDA', cm.TradeAction.BUY_TO_CLOSE_ALL, d4, 108, None),
+                ('CNN', cm.TradeAction.SELL, d3, 105, 500),
+                ('CNN', cm.TradeAction.BUY_TO_CLOSE_ALL, d4, 108, None),
 
-                ('NVDA', cm.TradeAction.SELL, d5, 100, 1000),
-                ('NVDA', cm.TradeAction.BUY_TO_CLOSE_50, d6, 110, None),
-                ('NVDA', cm.TradeAction.BUY, d7, 110, 100),
-                ('NVDA', cm.TradeAction.BUY_TO_CLOSE_ALL, d8, 120, None),                                
+                ('CNN', cm.TradeAction.SELL, d5, 100, 1000),
+                ('CNN', cm.TradeAction.BUY_TO_CLOSE_50, d6, 110, None),
+                ('CNN', cm.TradeAction.BUY, d7, 110, 100),
+                ('CNN', cm.TradeAction.BUY_TO_CLOSE_ALL, d8, 120, None),                                
                ]
 
     trades3 = [ \
-                ('NVDL', cm.TradeAction.SELL, d3, 105, 500),
-                ('NVDL', cm.TradeAction.BUY_TO_CLOSE_ALL, d4, 108, None),
+                ('MOD', cm.TradeAction.SELL, d3, 105, 500),
+                ('MOD', cm.TradeAction.BUY_TO_CLOSE_ALL, d4, 108, None),
 
-                ('NVDL', cm.TradeAction.SELL, d5, 100, 1000),
-                ('NVDL', cm.TradeAction.BUY_TO_CLOSE_50, d6, 110, None),
-                ('NVDL', cm.TradeAction.BUY, d7, 110, 100),
+                ('MOD', cm.TradeAction.SELL, d5, 100, 1000),
+                ('MOD', cm.TradeAction.BUY_TO_CLOSE_50, d6, 110, None),
+                ('MOD', cm.TradeAction.BUY, d7, 110, 100),
                ]
     
 

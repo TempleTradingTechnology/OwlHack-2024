@@ -76,7 +76,8 @@ def _test1():
     from preference import Preference
 
     pref = Preference()
-    universe = ['AAPL', 'COST', 'NVDA']
+    # pick some random name
+    universe = ['AWO', 'BDJ', 'BDTC']
     start_date = datetime.date(2013, 1, 1)
     end_date = datetime.date(2023, 1, 1)
 

@@ -58,7 +58,7 @@ def _test1():
     
     loader = DataLoader(pref, data_dir = pref.train_data_dir)
 
-    df = loader.get_daily_hist_price('AAPL')
+    df = loader.get_daily_hist_price('AWO')
     print(df.head())
     print(df.tail())
 

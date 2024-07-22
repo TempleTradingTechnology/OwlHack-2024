@@ -75,7 +75,7 @@ def _test1():
     start_date = datetime.date(2010, 1, 1)
     end_date = datetime.date(2022, 1, 1)
     
-    tickers = ['AAPL', 'NVDA', 'LLY', 'COST']
+    tickers = ['AWO', 'MOD', 'OCT', 'SPY']
     for ticker in tickers:
         stock = Stock(loader, ticker)
         stock.get_daily_hist_price(start_date, end_date)
