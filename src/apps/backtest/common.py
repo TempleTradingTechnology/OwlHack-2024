@@ -50,18 +50,25 @@ class TradeAction(enum.Enum):
     BUY_TO_CLOSE_ALL  = "BUY_TO_CLOSE_ALL"      # Buy back all short positions
     SELL_TO_CLOSE_ALL = "SELL_TO_CLOSE_ALL"     # Sell all long positions
 
-    # the following are more for options
-    BUY_TO_OPEN       = "BUY_TO_OPEN"           # buy new lots
-    SELL_TO_OPEN      = "SELL_TO_OPEN"          # sell new lots
-    BUY_TO_CLOSE      = "BUY_TO_CLOSE"          # buy to close all existing lots
-    SELL_TO_CLOSE     = "SELL_TO_CLOSE"         # sell all existing long position
-    
     # the following are for buying and selling shares without specifying the number of shares
     BUY_TO_CLOSE_50   = "BUY_TO_CLOSE_50"       # buy to close half
     BUY_TO_CLOSE_25   = "BUY_TO_CLOSE_25"       # buy to close a quarter
     SELL_TO_CLOSE_50  = "SELL_TO_CLOSE_50"      # sell 50 percent
     SELL_TO_CLOSE_25  = "SELL_TO_CLOSE_25"      # sell quarter position
 
+def is_a_buy(trade_action):
+    return trade_action in [TradeAction.BUY, TradeAction.BUY_TO_CLOSE_ALL, TradeAction.BUY_TO_CLOSE_50, TradeAction.BUY_TO_CLOSE_25,
+                            TradeAction.BUY.value, TradeAction.BUY_TO_CLOSE_ALL.value, TradeAction.BUY_TO_CLOSE_50.value,
+                            TradeAction.BUY_TO_CLOSE_25.value
+                            ]
+
+def is_a_sell(trade_action):
+    return trade_action in [TradeAction.SELL, TradeAction.SELL_TO_CLOSE_ALL, TradeAction.SELL_TO_CLOSE_50, TradeAction.SELL_TO_CLOSE_25,
+                            TradeAction.SELL.value, TradeAction.SELL_TO_CLOSE_ALL.value,
+                            TradeAction.SELL_TO_CLOSE_50.value, TradeAction.SELL_TO_CLOSE_25.value
+                            ]
+             
+    
 class TradeSignal(enum.Enum):
     SHORT = -1
     HOLD = 0

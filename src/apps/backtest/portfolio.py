@@ -162,8 +162,7 @@ class Portfolio(object):
             if outstanding_shares > 0:
                 self._positions_by_ticker[ticker].append(Position(ticker, trade_date, -1 * outstanding_shares, trade_price))
                 
-        
-        
+
     def add_trade(self, ticker, trade_action, trade_date, trade_price, trade_shares):
         '''
         When a trade happens, close existing lots with opposite direction as much as possible
@@ -172,6 +171,9 @@ class Portfolio(object):
 
         if trade_shares is not None and trade_shares < 0:
             raise Exception(f"Expect trade shares to be a positive numbers, received {trade_shares} instead.")
+
+        if trade_action is None or trade_action == cm.TradeAction.NONE:
+            return
         
         if ticker not in self._positions_by_ticker.keys():
             self._positions_by_ticker[ticker] = []
@@ -197,19 +199,33 @@ class Portfolio(object):
 
         #print(ticker, trade_shares, trade_action)
 
-        if trade_action in [cm.TradeAction.BUY, cm.TradeAction.BUY_TO_CLOSE_ALL, cm.TradeAction.BUY_TO_CLOSE_50,
-                            cm.TradeAction.BUY_TO_CLOSE_25]:
-            
+        if cm.is_a_buy(trade_action):
             self._handle_buy(ticker, trade_action, trade_date, trade_price, trade_shares)
             
-        elif trade_action in [cm.TradeAction.SELL, cm.TradeAction.SELL_TO_CLOSE_ALL, cm.TradeAction.SELL_TO_CLOSE_50,
-                              cm.TradeAction.SELL_TO_CLOSE_25]:
-                    
+        elif cm.is_a_sell(trade_action):       
             self._handle_sell(ticker, trade_action, trade_date, trade_price, trade_shares)
             
-        else:
-            raise Exception(f"Unsupported Trade Action: {trade_action}")
-            
+
+    def close_all_open_positions(self, pricing_matrix):
+        '''
+        Get all open positions, close them all with the last row
+        '''
+        exit_date = pricing_matrix.index[-1]
+        for pos in self.get_open_long_positions() + self.get_open_short_positions():
+            pos.exit_date = exit_date
+            pos.exit_price = pricing_matrix[pos.ticker][-1]
+            pos.type = Position.Type.CLOSED
+            pos.update()
+        
+    def save_trade_history(self, output_fname):
+        fout = open(output_fname, 'w')
+        header = "Ticker,Shares With Sign,Entry Date,Entry Price,Exit Date,Exit Price,Status,PnL\n"
+        fout.write(header)
+        for pos in self.get_all_positions():
+            txt = f"{pos.ticker},{pos.shares_with_sign},{pos.entry_date},{pos.entry_price},"
+            txt += f"{pos.exit_date},{pos.exit_price},{pos.type.value},{pos.pnl}"
+            fout.write('%s\n' % txt.replace('None',''))
+        fout.close()
 
     def summary(self):
         '''
@@ -244,30 +260,30 @@ def _test1():
                 ('NVDA', cm.TradeAction.SELL, d5, 100, 1000),
                 ('NVDA', cm.TradeAction.BUY_TO_CLOSE_50, d6, 110, None),
                 ('NVDA', cm.TradeAction.BUY, d7, 110, 100),
-#                ('NVDA', cm.TradeAction.BUY_TO_CLOSE_ALL, d8, 120, None),                                
-                
-        
+                ('NVDA', cm.TradeAction.BUY_TO_CLOSE_ALL, d8, 120, None),                                
                ]
 
+    trades3 = [ \
+                ('NVDL', cm.TradeAction.SELL, d3, 105, 500),
+                ('NVDL', cm.TradeAction.BUY_TO_CLOSE_ALL, d4, 108, None),
+
+                ('NVDL', cm.TradeAction.SELL, d5, 100, 1000),
+                ('NVDL', cm.TradeAction.BUY_TO_CLOSE_50, d6, 110, None),
+                ('NVDL', cm.TradeAction.BUY, d7, 110, 100),
+               ]
+    
 
     port = Portfolio('test')
     
-    for trade in trades1:
+    for trade in trades1 + trades2 + trades3:
         port.add_trade(trade[0], trade[1], trade[2], trade[3], trade[4])
 
-    for trade in trades2:
-        port.add_trade(trade[0], trade[1], trade[2], trade[3], trade[4])
-
-        for pos in port._positions_by_ticker['NVDA']:
-            print(pos.type, pos.shares_with_sign)
-
-        for pos in port.get_open_short_positions('NVDA'):
-            print(pos.type, pos.shares_with_sign)
-            
     for pos in port.get_all_positions():
         print(pos)
 
-        
+    output_fname = f"../../tests/output/{port.name}_trade_history.csv"
+    print("Saving trade history to ", output_fname)
+    port.save_trade_history(output_fname)
 
     
 

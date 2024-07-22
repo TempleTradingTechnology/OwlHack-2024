@@ -7,6 +7,8 @@ import pandas as pd
 import common as cm
 from datamatrix import DataMatrix
 
+from portfolio import Position, Portfolio
+
 class Strategy(object):
 
     '''
@@ -45,6 +47,8 @@ class Strategy(object):
         self.slippage = slippage
         self.risk_free_rate = risk_free_rate
 
+        self.pricing_matrix = self.input_dm.extract_price_matrix().copy()
+        
         # set up property based on the input datamatrix
         self.num_period = self.input_dm.shape[0]
         # days between periods
@@ -84,9 +88,9 @@ class Strategy(object):
         '''
         Run any model underlying the strategy, generate a trading signal, a trading action and the shares datamatrix
         Trading signal has either long (1), sell (-1) or hold (0)
-        Shares indicate how many shares to buy or sell
+        Shares indicate how many shares to buy or sell and are positive
         '''
-        pass
+        raise Exception("Should not be calling the Strategy Base class run_model method")
     
         
     def run_strategy(self):
@@ -95,11 +99,25 @@ class Strategy(object):
         Calculate the state of the strategy period by period.
         '''
         self.tsignal, self.taction, self.shares = self.run_model()
+        
+        nrow, ncol   = self.pricing_matrix.shape
+        nrow1, ncol1 = self.tsignal.shape
+        nrow2, ncol2 = self.taction.shape
+        nrow3, ncol3 = self.shares.shape
 
+        print(ncol1, ncol2, ncol3)
+        
+        if nrow != nrow1 or ncol != ncol1:
+            raise Exception(f"Pricing Matrix size don't matter in generate trade history")
+        
+        if nrow1 != nrow2 or nrow2 != nrow3:
+            raise Exception(f"Number of row don't matter in generate trade history")
+        if ncol1 != ncol2 or ncol2 != ncol3:
+            raise Exception(f"Number of column don't matter in generate trade history")
+        
         self.current_holding = (self.shares * self.tsignal).cumsum()
         self.equity = (self.current_holding * self.pricing_matrix).sum(axis = 1)
         
-        nrow, ncol = self.pricing_matrix.shape
         cash = self.initial_capital
         
         for i in range(nrow):
@@ -122,7 +140,26 @@ class Strategy(object):
         if self.timeframe == cm.TimeFrame.DAILY:
             self._calc_daily_stat()
 
-            
+        
+    def generate_trade_history(self, output_fname):
+        '''
+        '''
+        port = Portfolio(self.name)
+        nrow, ncol = self.pricing_matrix.shape
+        
+        for i in range(nrow):
+            trade_date = self.pricing_matrix.index[i]
+            for j in range(ncol):
+                ticker = self.tsignal.columns[j]
+                action = self.taction.iloc[i, j]
+                shares = self.shares.iloc[i, j]
+                price = self.pricing_matrix.iloc[i, j]
+
+                port.add_trade(ticker, action, trade_date, price, shares)
+                
+        port.save_trade_history(output_fname)
+        
+    
     def _calc_daily_stat(self):
         '''
         Calculate performance stat for daily timeframe
@@ -154,3 +191,17 @@ class Strategy(object):
         
         self.pnl.to_csv(os.path.join(output_dir, f"{fname}_pnl.csv"))
     
+        self.generate_trade_history(os.path.join(output_dir, f"{fname}_trade_history.csv"))
+
+
+def _test():
+    pass
+
+
+if __name__ == "__main__":
+    _test()
+
+
+                                    
+
+                                    

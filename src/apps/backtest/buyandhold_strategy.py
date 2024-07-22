@@ -17,7 +17,6 @@ class BuyAndHoldStrategy(Strategy):
                  weighing_scheme = cm.WeighingScheme.EqualDollarExposure):
         super().__init__(f'Buy and Hold_{weighing_scheme.value}', input_datamatrix, initial_capital, price_choice)
         self.weighing_scheme = weighing_scheme
-        self.pricing_matrix = self.input_dm.extract_price_matrix().copy()
 
     def validate(self):
         '''
@@ -43,9 +42,9 @@ class BuyAndHoldStrategy(Strategy):
         tsignal = self.pricing_matrix.copy()
         price_row = taction.iloc[0]
         for col in taction.columns:
-            taction[col] = cm.TradeAction.NONE.value
+            taction[col] = cm.TradeAction.NONE
             tsignal[col] = 0
-        taction.iloc[0:1, :] = cm.TradeAction.BUY_TO_OPEN.value
+        taction.iloc[0:1, :] = cm.TradeAction.BUY
         tsignal.iloc[0:1, :] = cm.TradeSignal.LONG.value
 
         shares = tsignal.copy()
@@ -66,7 +65,7 @@ class BuyAndHoldStrategy(Strategy):
         # sell at the end
         tsignal.iloc[-1, :] = -1 # sell
         shares.iloc[-1] = shares.iloc[0]
-        taction.iloc[-1, :] = cm.TradeAction.SELL_TO_CLOSE_ALL.value
+        taction.iloc[-1, :] = cm.TradeAction.SELL_TO_CLOSE_ALL
         
         return(tsignal, taction, shares)
     
