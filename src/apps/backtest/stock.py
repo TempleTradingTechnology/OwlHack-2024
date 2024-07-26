@@ -34,6 +34,7 @@ class Stock(object):
     
     def _calc_daily_basic(self):
         '''
+        Calculate the most common moving averages, technical indicators and returns
         '''
         for period in [10, 20, 50, 200]:
             self.ohlcv_df[f"SMA_{period}"] = ta.SMA(self.ohlcv_df[cm.DataField.close], timeperiod = period)
@@ -41,14 +42,19 @@ class Stock(object):
         c = self.ohlcv_df[cm.DataField.close]
         self.ohlcv_df['daily_returns'] = (c - c.shift(1))/c.shift(1)
         self.ohlcv_df['weekly_returns'] = (c - c.shift(5))/c.shift(1)
-        self.ohlcv_df['monthly_returns'] = (c - c.shift(20))/c.shift(1)                
+        self.ohlcv_df['monthly_returns'] = (c - c.shift(20))/c.shift(1)
+
+        std_rsi_period = 14
+        self.ohlcv_df[cm.DataField.RSI.value] = ta.RSI(self.ohlcv_df[cm.DataField.close], timeperiod = std_rsi_period)
 
         
-    def grab_fields(self, fields):
+    def grab_fields(self, fields = None):
         '''
         grab a subset of fields and add the ticker
         '''
         output_df = pd.DataFrame(index = self.ohlcv_df.index)
+        if fields is None:
+            fields = self.ohlcv_df.columns
         for fld in fields:
             output_df[f"{self.ticker}_{fld}"] = self.ohlcv_df[fld]
         return(output_df)
@@ -80,11 +86,15 @@ def _test1():
         stock = Stock(loader, ticker)
         stock.get_daily_hist_price(start_date, end_date)
         print(ticker)
-        
         print(stock.ohlcv_df.tail())
+
+        print(stock.ohlcv_df.columns)
 
     fields = [cm.DataField.open, cm.DataField.close, cm.DataField.volume]
     print(stock.grab_fields(fields))
+
+    df = stock.grab_fields()
+    print(df.columns)
     
 def _test():
     _test1()

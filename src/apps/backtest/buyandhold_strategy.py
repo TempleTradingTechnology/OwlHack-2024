@@ -13,9 +13,9 @@ from datamatrix import DataMatrix, DataMatrixLoader
 
 class BuyAndHoldStrategy(Strategy):
         
-    def __init__(self, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, slippage = 0.0,
+    def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, risk_free_rate = 0.04,
                  weighing_scheme = cm.WeighingScheme.EqualDollarExposure):
-        super().__init__(f'Buy and Hold_{weighing_scheme.value}', input_datamatrix, initial_capital, price_choice)
+        super().__init__(pref, f'Buy and Hold_{weighing_scheme.value}', input_datamatrix, initial_capital, price_choice, risk_free_rate)
         self.weighing_scheme = weighing_scheme
 
     def validate(self):
@@ -42,9 +42,9 @@ class BuyAndHoldStrategy(Strategy):
         tsignal = self.pricing_matrix.copy()
         price_row = taction.iloc[0]
         for col in taction.columns:
-            taction[col] = cm.TradeAction.NONE
+            taction[col] = cm.TradeAction.NONE.value
             tsignal[col] = 0
-        taction.iloc[0:1, :] = cm.TradeAction.BUY
+        taction.iloc[0:1, :] = cm.TradeAction.BUY.value
         tsignal.iloc[0:1, :] = cm.TradeSignal.LONG.value
 
         shares = tsignal.copy()
@@ -65,7 +65,7 @@ class BuyAndHoldStrategy(Strategy):
         # sell at the end
         tsignal.iloc[-1, :] = -1 # sell
         shares.iloc[-1] = shares.iloc[0]
-        taction.iloc[-1, :] = cm.TradeAction.SELL_TO_CLOSE_ALL
+        taction.iloc[-1, :] = cm.TradeAction.SELL_TO_CLOSE_ALL.value
         
         return(tsignal, taction, shares)
     
@@ -86,11 +86,11 @@ def _test1():
 
     loader = DataMatrixLoader(pref, name, universe, start_date, end_date)
     dm = loader.get_daily_datamatrix(fields)
-    print(dm.get_info())
+    #print(dm.get_info())
 
 
     for weigh_scheme in [cm.WeighingScheme.EqualDollarExposure, cm.WeighingScheme.EqualShares]:
-        buyandhold = BuyAndHoldStrategy(dm, cm.OneMillion, weighing_scheme = weigh_scheme)
+        buyandhold = BuyAndHoldStrategy(pref, dm, cm.OneMillion, weighing_scheme = weigh_scheme)
         buyandhold.validate()
         tradesignal, tradeaction, shares = buyandhold.run_model()
 

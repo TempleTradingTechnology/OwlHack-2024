@@ -1,4 +1,4 @@
 Ticker
-AAPL
-NVDA
-COST
+BDJ
+AWO
+BDTC

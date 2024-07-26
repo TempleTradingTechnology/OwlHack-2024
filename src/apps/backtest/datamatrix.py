@@ -4,7 +4,9 @@ Class to manage data set for a list of stocks and for a time period
 
 import os
 import datetime
+import copy
 import pandas as pd
+import numpy as np
 
 import preference
 import common as cm
@@ -31,7 +33,7 @@ class DataMatrix(pd.DataFrame):
         self._name = _name
         self._universe = _temp
         self._timeframe = _timeframe
-
+        
     @property
     def timeframe(self):
         return self._timeframe
@@ -57,7 +59,7 @@ class DataMatrix(pd.DataFrame):
         self._universe = value
     
     def get_info(self):
-        info = f"Name: {self._name}, Universe: {self._universe}"
+        info = f"Name: {self._name}, Universe: {self._universe}, TimeFrame: {self.timeframe}"
         return(info)
         
 
@@ -70,7 +72,13 @@ class DataMatrix(pd.DataFrame):
         result.columns = [f"{col.split('_')[0]}" for col in result.columns]
         return(result)
 
-        
+
+    def copy_and_zero(self):
+        dm = self.copy()
+        for col in dm.columns:
+            dm[col].values[:] = 0
+        return(dm)
+    
     def validate(self):
         '''
         TBD
@@ -92,9 +100,6 @@ class DataMatrixLoader(DataLoader):
     class responsible for loading data from files or database into DataMatrix which is a derived class from pandas DataFrame
     '''
 
-    _standard_fields = [ cm.DataField.open, cm.DataField.high, cm.DataField.low, cm.DataField.close, cm.DataField.volume
-                         ]
-    
     def __init__(self, pref, name, universe, start_date, end_date, data_src = DataLoader.DataSource.CSV,
                  data_dir = None, db_connection = None):
 
@@ -105,11 +110,10 @@ class DataMatrixLoader(DataLoader):
         self.end_date = end_date
 
 
-    def get_daily_datamatrix(self, fields = _standard_fields):
+    def get_daily_datamatrix(self, fields = None):
         '''
         create datamatrix with columns as {ticker_field}
         '''
-        self.fields = fields
         df = Stock(self, self.universe[0]).get_daily_hist_price(self.start_date,
                                                                 self.end_date).grab_fields(fields)
 
@@ -131,14 +135,23 @@ def _test1():
     df = pd.read_csv(fname)
 
     dm = DataMatrix(df, name = 'test', universe = ['AWO', 'BDJ'])
+
     print(dm.get_info())
     print(dm.head())
 
-    dm = DataMatrix(data = {'A': [1,2,3]})
+    dm = DataMatrix(data = {'A': [1,2,3], 'B': [4, 5, 6]})
     print(dm.get_info())
-    
     print(dm.head())
-    
+
+    # show how to apply lambda
+    # modify column by column
+    import math
+#    dm = dm.apply(lambda col: np.square(col) if col.name == 'A' else col + 1, axis=0)
+#    dm = dm.apply(lambda col: col.index if col.name == 'A' else col + 1, axis=0)
+    dm = dm.apply(lambda col: (lambda x: x**3)(col) if col.name == 'A' else col + 1, axis=0)
+    print(dm.head())
+
+#    dm = dm.apply(lambda row: col.name , axis=1)
 
 def _test2():
 
@@ -153,20 +166,30 @@ def _test2():
     end_date = datetime.date(2022, 1, 1)
 
     name = 'test'
-    fields = [cm.DataField.close, cm.DataField.volume, cm.DataField.SMA_200, cm.DataField.daily_returns]
-
     loader = DataMatrixLoader(pref, name, universe, start_date, end_date)
-    dm = loader.get_daily_datamatrix(fields)
+    dm = loader.get_daily_datamatrix()
     print(dm.get_info())
 
     print(dm.extract_price_matrix('Close'))
     
-    output_fname = f"C:/test/model_data/{name}.csv"
+    output_fname = f"C:/temp/{name}1.csv"
+    print(f"Dumping output file to {output_fname}")
     dm.to_csv(output_fname)
+
+    fields = [cm.DataField.close, cm.DataField.volume, cm.DataField.SMA_200, cm.DataField.daily_returns]
+    dm = loader.get_daily_datamatrix(fields)
+    output_fname = f"C:/temp/{name}2.csv"
+    print(f"Dumping output file to {output_fname}")
+    dm.to_csv(output_fname)
+
+    dm2 = dm.copy_and_zero()
+    
+    print(dm2.head(), type(dm2))
+
     
 def _test():
     _test1()
-    _test2()
+    #_test2()
     
 if __name__ == "__main__":
     _test()

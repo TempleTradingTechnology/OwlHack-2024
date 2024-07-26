@@ -37,14 +37,14 @@ class Strategy(object):
        
     '''
 
-    def __init__(self, name, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close,
-                 slippage = 0.0, risk_free_rate = 0.04):
+    def __init__(self, pref, name, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close,
+                 risk_free_rate = 0.04):
+        self.pref = pref
         self.name = name
         self.input_dm = input_datamatrix
         self.universe = self.input_dm.universe
         self.initial_capital = initial_capital
         self.price_choice = price_choice
-        self.slippage = slippage
         self.risk_free_rate = risk_free_rate
 
         self.pricing_matrix = self.input_dm.extract_price_matrix().copy()

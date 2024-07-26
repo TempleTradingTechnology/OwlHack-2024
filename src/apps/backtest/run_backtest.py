@@ -13,6 +13,7 @@ import backtester
 from datamatrix import DataMatrix, DataMatrixLoader
 
 from buyandhold_strategy import BuyAndHoldStrategy
+from RSI_strategy import RSIStrategy
 
 def create_strategy_list(pref, datamatrix_loader):
     #
@@ -20,12 +21,14 @@ def create_strategy_list(pref, datamatrix_loader):
     fields = [cm.DataField.close, cm.DataField.volume, cm.DataField.SMA_200, cm.DataField.daily_returns]
 
     print("Creating datamatrix")
-    dm = datamatrix_loader.get_daily_datamatrix(fields)
+    dm = datamatrix_loader.get_daily_datamatrix()
 
     
-    
-    buyandhold = BuyAndHoldStrategy(dm, pref.initial_capital)
+    buyandhold = BuyAndHoldStrategy(pref, dm, pref.initial_capital/2)
     result.append(buyandhold)
+
+    rsi = RSIStrategy(pref, dm, pref.initial_capital/2)
+    result.append(rsi)
     
     return(result)
 

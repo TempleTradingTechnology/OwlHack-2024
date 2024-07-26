@@ -29,6 +29,7 @@ class DataField(str, enum.Enum):
     close = 'Close'
     volume = 'Volume'
 
+    # common moving averages
     SMA_10 = 'SMA_10'
     SMA_20 = 'SMA_20'
     SMA_50 = 'SMA_50'
@@ -42,7 +43,14 @@ class DataField(str, enum.Enum):
     
     capitalization = 'Capitalization'
 
+    # common technical indicators
+    RSI = 'RSI'
     
+
+OHLCV_Fields_value = [DataField.open.value, DataField.high.value, DataField.low.value, DataField.close.value, DataField.volume.value]
+SMA_Fields_value = [DataField.SMA_10.value, DataField.SMA_20.value, DataField.SMA_50.value, DataField.SMA_200.value]
+                  
+
 class TradeAction(enum.Enum):
     NONE              = ""
     BUY               = "BUY"                   # Buy shares
