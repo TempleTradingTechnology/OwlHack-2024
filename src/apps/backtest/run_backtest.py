@@ -50,7 +50,7 @@ def run():
     strategy_list = create_strategy_list(pref, driver.datamatrix_loader)
 
     driver.run(strategy_list)
-        
+    driver.summary()
 
 if __name__ == "__main__":
     run()

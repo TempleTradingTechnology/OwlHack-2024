@@ -13,9 +13,9 @@ from datamatrix import DataMatrix, DataMatrixLoader
 
 class BuyAndHoldStrategy(Strategy):
         
-    def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, risk_free_rate = 0.04,
+    def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, 
                  weighing_scheme = cm.WeighingScheme.EqualDollarExposure):
-        super().__init__(pref, f'Buy and Hold_{weighing_scheme.value}', input_datamatrix, initial_capital, price_choice, risk_free_rate)
+        super().__init__(pref, f'Buy and Hold_{weighing_scheme.value}', input_datamatrix, initial_capital, price_choice)
         self.weighing_scheme = weighing_scheme
 
     def validate(self):

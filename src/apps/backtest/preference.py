@@ -19,13 +19,15 @@ class Preference(object):
     _file_dir = os.path.dirname(os.path.realpath(__file__))
 
     _default_option = { 'environ': 'dev', 'verbose': False,
-                        'start_date': None, 'end_date': None, 
+                        'start_date': None, 'end_date': None,
+                        'risk_free_rate': 0.0,
                         'data_root_dir': os.path.join(_file_dir, '../../../data'),
                         'train_data_dir': os.path.join(_file_dir, '../../../data/train'),
                         'test_data_dir': os.path.join(_file_dir, '../../../data/test'),
                         'meta_data_dir': os.path.join(_file_dir, '../../../data/meta'),
                         'test_output_dir': os.path.join(_file_dir, '../../tests/output'),
                         'tickers': None, 'port_name': None,
+                        'random_seed': None
                        }
 
     def __init__(self, name = None, user = None, cli_args = None):
@@ -55,6 +57,15 @@ class Preference(object):
             self.end_date = cm.parse_date_str(self.end_date)
 
 
+    def describe(self, format_or_not = False):
+        '''
+        Return a well-for
+        '''
+        txt = ''
+        
+        return( txt if format_or_not else vars(pref))
+
+    
 def get_default_parser():
     #
     parser = argparse.ArgumentParser()
@@ -64,6 +75,8 @@ def get_default_parser():
 
     parser.add_argument('--start_date', dest='start_date', default="2001-01-01", help='start date (YYYY-MM-DD)')
     parser.add_argument('--end_date', dest='end_date', default="2020-01-01", help='end date (YYYY-MM-DD)')
+    parser.add_argument('--risk_free_rate', dest='risk_free_rate', default=0.0, type =float, help='Risk Free Rate')
+    
     parser.add_argument('--tickers', dest='tickers', default=None, help='Tickers with | separator')
 
     parser.add_argument('--data_dir', dest = 'data_dir', default=None, help='data dir')

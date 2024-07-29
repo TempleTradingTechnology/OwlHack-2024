@@ -37,15 +37,13 @@ class Strategy(object):
        
     '''
 
-    def __init__(self, pref, name, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close,
-                 risk_free_rate = 0.04):
+    def __init__(self, pref, name, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close):
         self.pref = pref
         self.name = name
         self.input_dm = input_datamatrix
         self.universe = self.input_dm.universe
         self.initial_capital = initial_capital
         self.price_choice = price_choice
-        self.risk_free_rate = risk_free_rate
 
         self.pricing_matrix = self.input_dm.extract_price_matrix().copy()
         
@@ -127,7 +125,7 @@ class Strategy(object):
                 cash = cash - trade_amt
 
             # assume cash grow with risk free rate
-            cash = cash * (1 + self.risk_free_rate * self.days_between_periods/365)
+            cash = cash * (1 + self.pref.risk_free_rate * self.days_between_periods/365)
             self.cash[i] = cash
 
         self.pnl = pd.DataFrame(data = {'cash': self.cash, 'equity': self.equity,
@@ -145,7 +143,7 @@ class Strategy(object):
         '''
         '''
         port = Portfolio(self.name)
-        nrow, ncol = self.pricing_matrix.shape
+        nrow, ncol = self.pricing_matrix.shapeg
         
         for i in range(nrow):
             trade_date = self.pricing_matrix.index[i]
@@ -167,7 +165,7 @@ class Strategy(object):
         pnl = self.pnl[self.pnl_column]
         self.performance['Cumulative Returns'] = 100 * self.pnl['cumulative pnl'][-1] / self.initial_capital
         self.performance['Maximum Drawdown'] = cm.calculate_max_drawdown(self.pnl['total_value'])
-        self.performance['Sharpe Ratio'] = cm.calculate_sharpe_ratio(pnl, self.risk_free_rate)
+        self.performance['Sharpe Ratio'] = cm.calculate_sharpe_ratio(pnl, self.pref.risk_free_rate)
         
         
     def finalize(self):

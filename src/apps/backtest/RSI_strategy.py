@@ -19,9 +19,9 @@ class RSIStrategy(Strategy):
     3. Capital Allocation: 1% of the capital
 
     '''
-    def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, risk_free_rate = 0.04,
+    def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, 
                  lower_bound = 20, upper_bound = 80, target_gain_percentage = 1.0, max_loss_percentage = -1.0, risk_allocation_percentage = 10):
-        super().__init__(pref, 'RSIStrategy', input_datamatrix, initial_capital, price_choice, risk_free_rate)
+        super().__init__(pref, 'RSIStrategy', input_datamatrix, initial_capital, price_choice)
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
         self.target_gain_percentage = target_gain_percentage
@@ -124,24 +124,22 @@ class RSIStrategy(Strategy):
                 # if first time trigger, initialize buy or sell, positive shares for long, negative for short
 
                 #elif rsi[j] < 20 and current_shares_with_sign.iloc[i-1, j] == 0:
-                elif rsi[i] < self.lower_bound:
+                elif rsi[i] < self.lower_bound and current_shares_with_sign.iloc[i-1, j] == 0:
                     
                     tsignal.iloc[i, j] = 1
                     taction.iloc[i, j] = cm.TradeAction.BUY.value
                     shares.iloc[i, j] = int(dollar_exposure/current_price)
                     current_shares_with_sign.iloc[i, j] = shares.iloc[i, j]
-                    
 
                     entry_day_index[ticker] = i
                     entry_price[ticker] = self.pricing_matrix.iloc[i, j]
                     
                 elif rsi[i] > self.upper_bound and current_shares_with_sign.iloc[i-1, j] == 0:
+                    
                     tsignal.iloc[i, j] = -1
                     taction.iloc[i, j] = cm.TradeAction.SELL.value
-                    
                     shares.iloc[i, j] = int(dollar_exposure/current_price)
                     current_shares_with_sign.iloc[i, j] = -1* shares.iloc[i, j] 
-                    
 
                     entry_day_index[ticker] = i
                     entry_price[ticker] = self.pricing_matrix.iloc[i, j]
@@ -169,7 +167,7 @@ def _test1():
     loader = DataMatrixLoader(pref, name, universe, start_date, end_date)
     dm = loader.get_daily_datamatrix()
 
-    RSI = RSIStrategy(pref, dm, cm.OneMillion, risk_free_rate = 0.0, target_gain_percentage = 1.5, max_loss_percentage = -0.5)
+    RSI = RSIStrategy(pref, dm, cm.OneMillion, target_gain_percentage = 1.5, max_loss_percentage = -0.5)
     RSI.validate()
     tradesignal, tradeaction, shares = RSI.run_model()
 
