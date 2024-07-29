@@ -5,10 +5,10 @@ Classes for Buy and Hold
 import enum
 import datetime
 import pandas as pd
-import talib as ta
+import pandas_ta as ta
 
 import common as cm
-from strategy import Strategy
+from lib.strategy import Strategy
 from datamatrix import DataMatrix, DataMatrixLoader
 
 class RSIStrategy(Strategy):
@@ -42,7 +42,7 @@ class RSIStrategy(Strategy):
             col = f"{ticker}_{self.price_choice}"
             if col not in columns:
                 raise Exception(f"Cannot found {col} for {ticker}")
-            
+
 
 
     def _calc_RSI(self):
@@ -51,9 +51,9 @@ class RSIStrategy(Strategy):
         '''
         for ticker in self.universe:
             price = self.input_dm[f"{ticker}_{cm.DataField.close}"]
-            self.input_dm[f"{ticker}_RSI2"] = ta.RSI(price, timeperiod = 20)
-        
-        
+            self.input_dm[f"{ticker}_RSI2"] = ta.rsi(price, timeperiod = 20)
+
+
     def run_model(self, model = None):
         '''
         No external prediction model needed
@@ -64,16 +64,16 @@ class RSIStrategy(Strategy):
         self._calc_RSI()
 
         RSI = cm.DataField.RSI.value
-        
+
         # when RSI is above 80, trade signal is sell, when RSI is below 20, trade signal is buy
         nrow, ncol   = self.pricing_matrix.shape
-        
+
         taction = self.pricing_matrix.copy()
         tsignal = self.pricing_matrix.copy()
         # shares on trade execution
         shares = self.pricing_matrix.copy()
 
-        # existing shares with sign 
+        # existing shares with sign
         current_shares_with_sign = self.pricing_matrix.copy()
         dollar_exposure = self.initial_capital * self.risk_allocation_percentage/100
 
@@ -81,23 +81,23 @@ class RSIStrategy(Strategy):
         tsignal *= 0
         shares  *= 0
         current_shares_with_sign *= 0
-        
+
         # remember the price and the date index when a trade was put on by ticker
         entry_day_index = {}
         entry_price = {}
-        
+
         for j in range(ncol):
             ticker = self.pricing_matrix.columns[j]
             rsi = self.input_dm[f"{ticker}_{RSI}"]
             for i in range(1, nrow):
-                
+
                 current_price = self.pricing_matrix.iloc[i, j]
                 # propagate the previous current_shares to the current period
                 current_shares_with_sign.iloc[i, j] = current_shares_with_sign.iloc[i-1, j]
 
                 if self.pref.verbose:
                     print(i, j, entry_price, entry_day_index, rsi[i])
-                    
+
                 # a position exists already, check if one can exit the current position
                 if current_shares_with_sign.iloc[i-1, j] != 0:
                     ret = 100 * (current_price - entry_price[ticker])/entry_price[ticker]
@@ -109,7 +109,7 @@ class RSIStrategy(Strategy):
                         if current_shares_with_sign.iloc[i-1, j] > 0:
                             tsignal.iloc[i, j] = -1
                             taction.iloc[i, j] = cm.TradeAction.SELL.value
-                            
+
                             shares.iloc[i, j] = abs(current_shares_with_sign.iloc[i-1, j])
                             current_shares_with_sign.iloc[i, j] = 0
 
@@ -117,29 +117,45 @@ class RSIStrategy(Strategy):
                         elif current_shares_with_sign.iloc[i-1, j] < 0:
                             tsignal.iloc[i, j] = 1
                             taction.iloc[i, j] = cm.TradeAction.BUY.value
-                            
+
                             shares.iloc[i, j] = abs(current_shares_with_sign.iloc[i-1, j])
                             current_shares_with_sign.iloc[i, j] = 0
-                            
+
                 # if first time trigger, initialize buy or sell, positive shares for long, negative for short
 
                 #elif rsi[j] < 20 and current_shares_with_sign.iloc[i-1, j] == 0:
+<<<<<<< HEAD:src/apps/backtest/RSI_strategy.py
                 elif rsi[i] < self.lower_bound and current_shares_with_sign.iloc[i-1, j] == 0:
                     
+=======
+                elif rsi[i] < self.lower_bound:
+
+>>>>>>> 8a624fe579fae357cfa3b5d777f50d45e1d7f095:src/backtest/strategy/RSI_strategy.py
                     tsignal.iloc[i, j] = 1
                     taction.iloc[i, j] = cm.TradeAction.BUY.value
                     shares.iloc[i, j] = int(dollar_exposure/current_price)
                     current_shares_with_sign.iloc[i, j] = shares.iloc[i, j]
+<<<<<<< HEAD:src/apps/backtest/RSI_strategy.py
+=======
+
+>>>>>>> 8a624fe579fae357cfa3b5d777f50d45e1d7f095:src/backtest/strategy/RSI_strategy.py
 
                     entry_day_index[ticker] = i
                     entry_price[ticker] = self.pricing_matrix.iloc[i, j]
-                    
+
                 elif rsi[i] > self.upper_bound and current_shares_with_sign.iloc[i-1, j] == 0:
                     
                     tsignal.iloc[i, j] = -1
                     taction.iloc[i, j] = cm.TradeAction.SELL.value
+<<<<<<< HEAD:src/apps/backtest/RSI_strategy.py
                     shares.iloc[i, j] = int(dollar_exposure/current_price)
                     current_shares_with_sign.iloc[i, j] = -1* shares.iloc[i, j] 
+=======
+
+                    shares.iloc[i, j] = int(dollar_exposure/current_price)
+                    current_shares_with_sign.iloc[i, j] = -1* shares.iloc[i, j]
+
+>>>>>>> 8a624fe579fae357cfa3b5d777f50d45e1d7f095:src/backtest/strategy/RSI_strategy.py
 
                     entry_day_index[ticker] = i
                     entry_price[ticker] = self.pricing_matrix.iloc[i, j]
@@ -147,10 +163,10 @@ class RSIStrategy(Strategy):
                 else:
                     # no trade (new or closing trades), do nothing except copying previous current shares
                     pass
-                
+
         return(tsignal, taction, shares)
-    
-        
+
+
 
 def _test1():
 
@@ -173,13 +189,13 @@ def _test1():
 
     #print(tradeaction.head())
     #print(shares)
-    
+
     RSI.run_strategy()
     print(RSI.performance)
 
     print(f"Saving output to {pref.test_output_dir}")
     RSI.save_to_csv(pref.test_output_dir)
-    
+
 def _test():
     _test1()
 
