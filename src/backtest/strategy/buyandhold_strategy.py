@@ -8,11 +8,12 @@ import pandas as pd
 
 
 import common as cm
-from strategy import Strategy
+# from strategy import Strategy
+from lib.strategy import Strategy
 from datamatrix import DataMatrix, DataMatrixLoader
 
 class BuyAndHoldStrategy(Strategy):
-        
+
     def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, risk_free_rate = 0.04,
                  weighing_scheme = cm.WeighingScheme.EqualDollarExposure):
         super().__init__(pref, f'Buy and Hold_{weighing_scheme.value}', input_datamatrix, initial_capital, price_choice, risk_free_rate)
@@ -54,7 +55,7 @@ class BuyAndHoldStrategy(Strategy):
 
             for col in shares.columns:
                 shares[col] = sh
-                
+
         elif self.weighing_scheme == cm.WeighingScheme.EqualDollarExposure:
             mean_exposure = self.initial_capital / len(self.universe)
             for col in shares.columns:
@@ -66,10 +67,10 @@ class BuyAndHoldStrategy(Strategy):
         tsignal.iloc[-1, :] = -1 # sell
         shares.iloc[-1] = shares.iloc[0]
         taction.iloc[-1, :] = cm.TradeAction.SELL_TO_CLOSE_ALL.value
-        
+
         return(tsignal, taction, shares)
-    
-        
+
+
 
 def _test1():
 
@@ -99,9 +100,9 @@ def _test1():
 
         buyandhold.run_strategy()
         print(buyandhold.performance)
-    
+
         buyandhold.save_to_csv(pref.test_output_dir)
-    
+
 def _test():
     _test1()
 
