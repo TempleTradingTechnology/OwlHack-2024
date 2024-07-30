@@ -19,7 +19,7 @@ class RSIStrategy(Strategy):
     3. Capital Allocation: 1% of the capital
 
     '''
-    def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, 
+    def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close,
                  lower_bound = 20, upper_bound = 80, target_gain_percentage = 1.0, max_loss_percentage = -1.0, risk_allocation_percentage = 10):
         super().__init__(pref, 'RSIStrategy', input_datamatrix, initial_capital, price_choice)
         self.lower_bound = lower_bound
@@ -124,38 +124,24 @@ class RSIStrategy(Strategy):
                 # if first time trigger, initialize buy or sell, positive shares for long, negative for short
 
                 #elif rsi[j] < 20 and current_shares_with_sign.iloc[i-1, j] == 0:
-<<<<<<< HEAD:src/apps/backtest/RSI_strategy.py
-                elif rsi[i] < self.lower_bound and current_shares_with_sign.iloc[i-1, j] == 0:
-                    
-=======
                 elif rsi[i] < self.lower_bound:
 
->>>>>>> 8a624fe579fae357cfa3b5d777f50d45e1d7f095:src/backtest/strategy/RSI_strategy.py
                     tsignal.iloc[i, j] = 1
                     taction.iloc[i, j] = cm.TradeAction.BUY.value
                     shares.iloc[i, j] = int(dollar_exposure/current_price)
                     current_shares_with_sign.iloc[i, j] = shares.iloc[i, j]
-<<<<<<< HEAD:src/apps/backtest/RSI_strategy.py
-=======
-
->>>>>>> 8a624fe579fae357cfa3b5d777f50d45e1d7f095:src/backtest/strategy/RSI_strategy.py
 
                     entry_day_index[ticker] = i
                     entry_price[ticker] = self.pricing_matrix.iloc[i, j]
 
                 elif rsi[i] > self.upper_bound and current_shares_with_sign.iloc[i-1, j] == 0:
-                    
+
                     tsignal.iloc[i, j] = -1
                     taction.iloc[i, j] = cm.TradeAction.SELL.value
-<<<<<<< HEAD:src/apps/backtest/RSI_strategy.py
-                    shares.iloc[i, j] = int(dollar_exposure/current_price)
-                    current_shares_with_sign.iloc[i, j] = -1* shares.iloc[i, j] 
-=======
 
                     shares.iloc[i, j] = int(dollar_exposure/current_price)
                     current_shares_with_sign.iloc[i, j] = -1* shares.iloc[i, j]
 
->>>>>>> 8a624fe579fae357cfa3b5d777f50d45e1d7f095:src/backtest/strategy/RSI_strategy.py
 
                     entry_day_index[ticker] = i
                     entry_price[ticker] = self.pricing_matrix.iloc[i, j]

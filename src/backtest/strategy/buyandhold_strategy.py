@@ -13,13 +13,8 @@ from lib.strategy import Strategy
 from datamatrix import DataMatrix, DataMatrixLoader
 
 class BuyAndHoldStrategy(Strategy):
-<<<<<<< HEAD:src/apps/backtest/buyandhold_strategy.py
-        
-    def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, 
-=======
 
     def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, risk_free_rate = 0.04,
->>>>>>> 8a624fe579fae357cfa3b5d777f50d45e1d7f095:src/backtest/strategy/buyandhold_strategy.py
                  weighing_scheme = cm.WeighingScheme.EqualDollarExposure):
         super().__init__(pref, f'Buy and Hold_{weighing_scheme.value}', input_datamatrix, initial_capital, price_choice)
         self.weighing_scheme = weighing_scheme

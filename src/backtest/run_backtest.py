@@ -58,11 +58,7 @@ def run():
     strategy_list = create_strategy_list(pref, driver.datamatrix_loader)
 
     driver.run(strategy_list)
-<<<<<<< HEAD:src/apps/backtest/run_backtest.py
     driver.summary()
-=======
-
->>>>>>> 8a624fe579fae357cfa3b5d777f50d45e1d7f095:src/backtest/run_backtest.py
 
 if __name__ == "__main__":
     run()

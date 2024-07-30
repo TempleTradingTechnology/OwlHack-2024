@@ -142,13 +142,8 @@ class Strategy(object):
         '''
         '''
         port = Portfolio(self.name)
-<<<<<<< HEAD:src/apps/backtest/strategy.py
-        nrow, ncol = self.pricing_matrix.shapeg
-        
-=======
         nrow, ncol = self.pricing_matrix.shape
 
->>>>>>> 8a624fe579fae357cfa3b5d777f50d45e1d7f095:src/backtest/lib/strategy.py
         for i in range(nrow):
             trade_date = self.pricing_matrix.index[i]
             for j in range(ncol):
@@ -169,15 +164,9 @@ class Strategy(object):
         pnl = self.pnl[self.pnl_column]
         self.performance['Cumulative Returns'] = 100 * self.pnl['cumulative pnl'][-1] / self.initial_capital
         self.performance['Maximum Drawdown'] = cm.calculate_max_drawdown(self.pnl['total_value'])
-<<<<<<< HEAD:src/apps/backtest/strategy.py
         self.performance['Sharpe Ratio'] = cm.calculate_sharpe_ratio(pnl, self.pref.risk_free_rate)
-        
-        
-=======
-        self.performance['Sharpe Ratio'] = cm.calculate_sharpe_ratio(pnl, self.risk_free_rate)
 
 
->>>>>>> 8a624fe579fae357cfa3b5d777f50d45e1d7f095:src/backtest/lib/strategy.py
     def finalize(self):
         '''
         Finalize any remaining calculation

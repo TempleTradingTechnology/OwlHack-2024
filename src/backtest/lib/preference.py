@@ -20,17 +20,6 @@ class Preference(object):
 
     _default_option = { 'environ': 'dev', 'verbose': False,
                         'start_date': None, 'end_date': None,
-<<<<<<< HEAD:src/apps/backtest/preference.py
-                        'risk_free_rate': 0.0,
-                        'data_root_dir': os.path.join(_file_dir, '../../../data'),
-                        'train_data_dir': os.path.join(_file_dir, '../../../data/train'),
-                        'test_data_dir': os.path.join(_file_dir, '../../../data/test'),
-                        'meta_data_dir': os.path.join(_file_dir, '../../../data/meta'),
-                        'test_output_dir': os.path.join(_file_dir, '../../tests/output'),
-                        'tickers': None, 'port_name': None,
-                        'random_seed': None
-                       }
-=======
                         'data_root_dir': os.environ["ROOT_DATA_DIR"],
                         'train_data_dir': os.path.join(os.environ["ROOT_DATA_DIR"], 'train'),
                         'test_data_dir': os.path.join(os.environ["ROOT_DATA_DIR"], 'test'),
@@ -38,7 +27,6 @@ class Preference(object):
                         'test_output_dir': os.path.join( os.environ["ROOT_DATA_DIR"], 'output'),
                         'tickers': None, 'port_name': None,
                     }
->>>>>>> 8a624fe579fae357cfa3b5d777f50d45e1d7f095:src/backtest/lib/preference.py
 
     def __init__(self, name = None, user = None, cli_args = None):
 
@@ -72,10 +60,10 @@ class Preference(object):
         Return a well-for
         '''
         txt = ''
-        
+
         return( txt if format_or_not else vars(pref))
 
-    
+
 def get_default_parser():
     #
     parser = argparse.ArgumentParser()
@@ -86,7 +74,7 @@ def get_default_parser():
     parser.add_argument('--start_date', dest='start_date', default="2001-01-01", help='start date (YYYY-MM-DD)')
     parser.add_argument('--end_date', dest='end_date', default="2020-01-01", help='end date (YYYY-MM-DD)')
     parser.add_argument('--risk_free_rate', dest='risk_free_rate', default=0.0, type =float, help='Risk Free Rate')
-    
+
     parser.add_argument('--tickers', dest='tickers', default=None, help='Tickers with | separator')
 
     parser.add_argument('--data_dir', dest = 'data_dir', default=None, help='data dir')
