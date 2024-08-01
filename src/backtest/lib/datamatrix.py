@@ -171,7 +171,10 @@ def _test2():
     print(dm.get_info())
 
     print(dm.extract_price_matrix('Close'))
-    
+
+    if not os.path.exists ("C:/temp"):
+        os.mkdir("C:/temp")
+        
     output_fname = f"C:/temp/{name}1.csv"
     print(f"Dumping output file to {output_fname}")
     dm.to_csv(output_fname)
@@ -189,7 +192,7 @@ def _test2():
     
 def _test():
     _test1()
-    #_test2()
+    _test2()
     
 if __name__ == "__main__":
     _test()

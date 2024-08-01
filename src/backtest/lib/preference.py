@@ -18,13 +18,18 @@ class Preference(object):
 
     _file_dir = os.path.dirname(os.path.realpath(__file__))
 
+    if os.getenv("ROOT_DATA_DIR") is not None:
+        _data_root = os.environ["ROOT_DATA_DIR"]
+    else:
+        _data_root = "../../../data"
+
     _default_option = { 'environ': 'dev', 'verbose': False,
                         'start_date': None, 'end_date': None,
-                        'data_root_dir': os.environ["ROOT_DATA_DIR"],
-                        'train_data_dir': os.path.join(os.environ["ROOT_DATA_DIR"], 'train'),
-                        'test_data_dir': os.path.join(os.environ["ROOT_DATA_DIR"], 'test'),
-                        'meta_data_dir': os.path.join( os.environ["ROOT_DATA_DIR"], 'meta'),
-                        'test_output_dir': os.path.join( os.environ["ROOT_DATA_DIR"], 'output'),
+                        'data_root_dir': _data_root,
+                        'train_data_dir': os.path.join(_data_root, 'train'),
+                        'test_data_dir': os.path.join(_data_root, 'test'),
+                        'meta_data_dir': os.path.join(_data_root, 'meta'),
+                        'test_output_dir': os.path.join(_data_root, 'output'),
                         'tickers': None, 'port_name': None,
                     }
 
