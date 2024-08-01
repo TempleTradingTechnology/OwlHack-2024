@@ -50,7 +50,6 @@ class Strategy(object):
         self.num_period = self.input_dm.shape[0]
         # days between periods
         self.timeframe = self.input_dm.timeframe
-        self.pnl_column = f"{self.timeframe.value} pnl"
 
         if self.timeframe == cm.TimeFrame.DAILY:
             self.days_between_periods = 1
@@ -64,9 +63,11 @@ class Strategy(object):
 
         # state variables of the strategy
         self.cash = pd.Series(index = input_datamatrix.index)
-        self.equity = pd.Series(index = input_datamatrix.index)
+        self.equity_exposure = pd.Series(index = input_datamatrix.index)
 
-
+        # specify name of the column for storing pnl returns for each period
+        self.pnl_returns_column = f"{self.timeframe.value} pnl returns"
+        
         # output of the strategy
         self.pnl = pd.DataFrame(index = input_datamatrix.index)
         self.performance = {'Cumulative Returns': -999,
@@ -113,7 +114,7 @@ class Strategy(object):
             raise Exception(f"Number of column don't matter in generate trade history")
 
         self.current_holding = (self.shares * self.tsignal).cumsum()
-        self.equity = (self.current_holding * self.pricing_matrix).sum(axis = 1)
+        self.equity_exposure = (self.current_holding * self.pricing_matrix).sum(axis = 1)
 
         cash = self.initial_capital
 
@@ -127,11 +128,13 @@ class Strategy(object):
             cash = cash * (1 + self.pref.risk_free_rate * self.days_between_periods/365)
             self.cash[i] = cash
 
-        self.pnl = pd.DataFrame(data = {'cash': self.cash, 'equity': self.equity,
-                                        'total_value': self.cash + self.equity,}
+        self.pnl = pd.DataFrame(data = {'cash': self.cash, 'equity_exposure': self.equity_exposure,
+                                        'total_value': self.cash + self.equity_exposure,}
                                   )
-        self.pnl['cumulative pnl'] = self.pnl['total_value'] - self.initial_capital
-        self.pnl[self.pnl_column] = self.pnl['cumulative pnl'].diff(periods = 1) / self.pnl['total_value']
+        self.pnl['cumulative_pnl'] = self.pnl['total_value'] - self.initial_capital
+
+        #Calculate period pnl returns from dollar pnl divided by beginning total value for that period
+        self.pnl[self.pnl_returns_column] = self.pnl['cumulative_pnl'].diff(periods = 1) / self.pnl['total_value']
 
         # calculate basic performance matrix
         if self.timeframe == cm.TimeFrame.DAILY:
@@ -161,8 +164,8 @@ class Strategy(object):
         '''
         Calculate performance stat for daily timeframe
         '''
-        pnl = self.pnl[self.pnl_column]
-        self.performance['Cumulative Returns'] = 100 * self.pnl['cumulative pnl'][-1] / self.initial_capital
+        pnl = self.pnl[self.pnl_returns_column]
+        self.performance['Cumulative Returns'] = 100 * self.pnl['cumulative_pnl'][-1] / self.initial_capital
         self.performance['Maximum Drawdown'] = cm.calculate_max_drawdown(self.pnl['total_value'])
         self.performance['Sharpe Ratio'] = cm.calculate_sharpe_ratio(pnl, self.pref.risk_free_rate)
 

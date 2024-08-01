@@ -16,11 +16,11 @@ OneMillion = 1000000.0
 
 class TimeFrame(enum.Enum):
 
-    DAILY = 'Daily'
+    DAILY = 'daily'
     ONEMIN = '1-min'
     FIVEMIN = '5-min'
-    WEEKLY = 'Weekly'
-    MONTHLY = 'Monthly'
+    WEEKLY = 'weekly'
+    MONTHLY = 'monthly'
 
 class DataField(str, enum.Enum):
     open = 'Open'
