@@ -6,12 +6,14 @@ Class to model stock
 import os
 import pandas as pd
 import numpy as np
-
 import datetime
-import preference
+
 import pandas_ta as ta
-import common as cm
-from loader import DataLoader
+
+import lib.preference
+
+import lib.common as cm
+from lib.loader import DataLoader
 
 class Stock(object):
 

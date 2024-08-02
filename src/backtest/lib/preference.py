@@ -31,6 +31,8 @@ class Preference(object):
                         'meta_data_dir': os.path.join(_data_root, 'meta'),
                         'test_output_dir': os.path.join(_data_root, 'output'),
                         'tickers': None, 'port_name': None,
+                        'random_seed': None,
+                        'risk_free_rate': 0.0,
                     }
 
     def __init__(self, name = None, user = None, cli_args = None):

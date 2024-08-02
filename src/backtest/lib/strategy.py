@@ -3,10 +3,11 @@ Class to model a strategy
 '''
 import os
 import pandas as pd
-import common as cm
-from datamatrix import DataMatrix
 
-from portfolio import Position, Portfolio
+import lib.common as cm
+
+from lib.datamatrix import DataMatrix
+from lib.portfolio import Position, Portfolio
 
 class Strategy(object):
 
@@ -144,7 +145,7 @@ class Strategy(object):
     def generate_trade_history(self, output_fname):
         '''
         '''
-        port = Portfolio(self.name)
+        self.port = Portfolio(self.name)
         nrow, ncol = self.pricing_matrix.shape
 
         for i in range(nrow):
@@ -155,9 +156,9 @@ class Strategy(object):
                 shares = self.shares.iloc[i, j]
                 price = self.pricing_matrix.iloc[i, j]
 
-                port.add_trade(ticker, action, trade_date, price, shares)
+                self.port.add_trade(ticker, action, trade_date, price, shares)
 
-        port.save_trade_history(output_fname)
+        self.port.save_trade_history(output_fname)
 
 
     def _calc_daily_stat(self):

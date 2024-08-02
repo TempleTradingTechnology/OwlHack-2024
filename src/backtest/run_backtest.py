@@ -24,21 +24,25 @@ from datamatrix import DataMatrix, DataMatrixLoader
 # import the strategies
 from strategy.buyandhold_strategy import BuyAndHoldStrategy
 from strategy.RSI_strategy import RSIStrategy
+from strategy.random_strategy import RandomStrategy
+from strategy.longindex_strategy import LongIndexStrategy
+
 
 def create_strategy_list(pref, datamatrix_loader):
     result = []
-    fields = [cm.DataField.close, cm.DataField.volume, cm.DataField.SMA_200, cm.DataField.daily_returns]
 
     print("Creating datamatrix")
     dm = datamatrix_loader.get_daily_datamatrix()
 
-
-    buyandhold = BuyAndHoldStrategy(pref, dm, pref.initial_capital/2)
+    buyandhold = BuyAndHoldStrategy(pref, dm, pref.initial_capital)
     result.append(buyandhold)
 
-    rsi = RSIStrategy(pref, dm, pref.initial_capital/2)
+    rsi = RSIStrategy(pref, dm, pref.initial_capital)
     result.append(rsi)
 
+    random = RandomStrategy(pref, dm, pref.initial_capital, lower_bound = 0.1, upper_bound = 0.9)
+    result.append(random)
+    
     return(result)
 
 def run():
@@ -46,6 +50,7 @@ def run():
     parser = preference.get_default_parser()
     parser.add_argument('--universe_name',   dest='universe_name', default = 'OwlHack 2024 Universe', help='Name of the Universe')
     parser.add_argument('--initial_capital', dest='initial_capital', default = cm.OneMillion, help='Initial Capital')
+    parser.add_argument('--random_seed', dest='random_seed', default = None, type = int, help='Random Seed')    
 
     args = parser.parse_args()
     args = parser.parse_args()
@@ -55,8 +60,11 @@ def run():
         pref.output_dir = pref.test_output_dir
 
     driver = backtester.Driver(pref)
-    strategy_list = create_strategy_list(pref, driver.datamatrix_loader)
+    # first run the bechnmark ETF first
+    driver.run_benchmark()
 
+    # create the list of strategies that we want to back-test
+    strategy_list = create_strategy_list(pref, driver.datamatrix_loader)
     driver.run(strategy_list)
     driver.summary()
 

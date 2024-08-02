@@ -8,13 +8,12 @@ import copy
 import pandas as pd
 import numpy as np
 
-import preference
-import common as cm
+import lib.preference
+import lib.common as cm
 
-from loader import DataLoader
-from stock import Stock
+from lib.loader import DataLoader
+from lib.stock import Stock
 
-import common as cm
 
 class DataMatrix(pd.DataFrame):
 

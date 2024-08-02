@@ -5,11 +5,12 @@ Main driver class for the backtester
 
 import datetime
 
-import preference
-import common as cm
-import portfolio
+import lib.preference
+import lib.common as cm
 
 from datamatrix import DataMatrixLoader
+
+from strategy.longindex_strategy import LongIndexStrategy
 
 class Driver(object):
 
@@ -20,6 +21,7 @@ class Driver(object):
         self.universe_name = pref.universe_name
         self.initial_capital = pref.initial_capital
         self.universe = cm.get_index_components(pref.universe_name, pref.meta_data_dir)
+        self.benchmark_etf = cm.get_ETF_by_index(pref.universe_name)
         self.datamatrix_loader = DataMatrixLoader(pref, pref.universe_name, self.universe, pref.start_date, pref.end_date)
         self.strategy_list = []
         self.run_date = None
@@ -42,6 +44,22 @@ class Driver(object):
             strategy.run_strategy()
             print(f"Saving results to {self.pref.output_dir}")
             strategy.save_to_csv(self.pref.output_dir)
+
+    def run_benchmark(self):
+        '''
+        for each backtest, we have index ETF as its benchmark for comparsiion. For example, long SPY for S&P 500 universe
+        '''
+        etf_universe = [self.benchmark_etf]
+        loader = DataMatrixLoader(self.pref, self.pref.universe_name, etf_universe, self.pref.start_date, self.pref.end_date)
+        dm = loader.get_daily_datamatrix()
+
+        buyETF = LongIndexStrategy(self.pref, dm, cm.OneMillion, index_name = self.benchmark_etf)
+        buyETF.validate()
+        buyETF.run_strategy()
+        print(f"Saving results to {self.pref.output_dir}")
+        buyETF.save_to_csv(self.pref.output_dir)
+        print(f"\nResult for running benchmark {self.benchmark_etf}\n {buyETF.name} performance: {buyETF.performance}")
+        
         
     def summary(self):
         '''
@@ -49,6 +67,7 @@ class Driver(object):
         '''
         for strategy in self.strategy_list:
             print(f"\n{strategy.name} performance: {strategy.performance}")
+            print(f"Trade history summary: {strategy.port.summary()}")
             
 def _test():
     '''unit test

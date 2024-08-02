@@ -9,29 +9,27 @@ import pandas as pd
 import random
 
 import common as cm
-from strategy import Strategy
+from lib.strategy import Strategy
 from datamatrix import DataMatrix, DataMatrixLoader
 
 class RandomStrategy(Strategy):
 
     ''' Simple Strategy based on Random
-    1. Entry rule: long when Random < 30, short when Random > 70
-    2. Exit rule: Close in a week or earn a target gain percentage or sell at a max loss percentage
-    3. Capital Allocation: 1% of the capital
+    1. Entry rule: long when Random > upper bound, short when Random < lower bound
+    2. Exit rule: 
+    3. Capital Allocation: based on an input risk allocation percentage parameters.
 
     '''
     def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close, 
-                 lower_bound = 20, upper_bound = 80, target_gain_percentage = 1.0, max_loss_percentage = -1.0, risk_allocation_percentage = 10):
+                 lower_bound = 0.2, upper_bound = 0.8, risk_allocation_percentage = 10):
         super().__init__(pref, 'RandomStrategy', input_datamatrix, initial_capital, price_choice)
         self.lower_bound = lower_bound
         self.upper_bound = upper_bound
-        self.target_gain_percentage = target_gain_percentage
-        self.max_loss_percentage = max_loss_percentage
         self.risk_allocation_percentage = risk_allocation_percentage
 
         # set random seed
         if pref.random_seed is not None:
-            random.sedd(pref.random_seed)
+            random.seed(pref.random_seed)
 
     def validate(self):
         '''
@@ -89,15 +87,29 @@ class RandomStrategy(Strategy):
                 if self.pref.verbose:
                     print(i, j, entry_price, entry_day_index, rnd)
                     
-                # a position exists already, check if one can exit the current position
+                # a position exists already, randomly decide to exit the position or not
                 if current_shares_with_sign.iloc[i-1, j] != 0:
                     # randomly decide whether to close it or not
-                    if rnd > 0.8 or rnd < 0.2:
-                        TBD
+                    if rnd > self.upper_bound or rnd < self.lower_bound:
+                        # if it was long, sell
+                        if current_shares_with_sign.iloc[i-1, j] > 0:
+                            tsignal.iloc[i, j] = -1
+                            taction.iloc[i, j] = cm.TradeAction.SELL.value
+
+                            shares.iloc[i, j] = abs(current_shares_with_sign.iloc[i-1, j])
+                            current_shares_with_sign.iloc[i, j] = 0
+
+                        # if it were short, buy back
+                        elif current_shares_with_sign.iloc[i-1, j] < 0:
+                            tsignal.iloc[i, j] = 1
+                            taction.iloc[i, j] = cm.TradeAction.BUY.value
+
+                            shares.iloc[i, j] = abs(current_shares_with_sign.iloc[i-1, j])
+                            current_shares_with_sign.iloc[i, j] = 0
 
                 
-                # go long if random > 0.8
-                elif rnd > 0.8 and current_shares_with_sign.iloc[i-1, j] == 0:
+                # randomly decide to go long (when rand > 0.8) or go short (rand is < 0.2)
+                elif rnd > self.upper_bound and current_shares_with_sign.iloc[i-1, j] == 0:
                     
                     tsignal.iloc[i, j] = 1
                     taction.iloc[i, j] = cm.TradeAction.BUY.value
@@ -107,7 +119,7 @@ class RandomStrategy(Strategy):
                     entry_day_index[ticker] = i
                     entry_price[ticker] = self.pricing_matrix.iloc[i, j]
                     
-                elif rnd < 0.2 and current_shares_with_sign.iloc[i-1, j] == 0:
+                elif rnd < self.lower_bound and current_shares_with_sign.iloc[i-1, j] == 0:
                     
                     tsignal.iloc[i, j] = -1
                     taction.iloc[i, j] = cm.TradeAction.SELL.value
@@ -133,8 +145,7 @@ def _test1():
     pref.random_seed = 1001
     
     # pick some random name
-#    universe = ['AWO', 'BDJ', 'BDTC']
-    universe = ['AWO', 'BDJ']
+    universe = ['AWO', 'BDJ', 'BDTC']
     start_date = datetime.date(2013, 1, 1)
     end_date = datetime.date(2023, 1, 1)
 
@@ -142,7 +153,7 @@ def _test1():
     loader = DataMatrixLoader(pref, name, universe, start_date, end_date)
     dm = loader.get_daily_datamatrix()
 
-    RSI = RSIStrategy(pref, dm, cm.OneMillion, target_gain_percentage = 1.5, max_loss_percentage = -0.5)
+    RSI = RandomStrategy(pref, dm, cm.OneMillion)
     RSI.validate()
     tradesignal, tradeaction, shares = RSI.run_model()
 

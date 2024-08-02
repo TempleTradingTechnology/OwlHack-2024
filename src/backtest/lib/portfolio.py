@@ -7,7 +7,8 @@ import datetime
 import copy
 from collections import deque
 from datetime import date
-import common as cm
+
+import lib.common as cm
 
 
 class Position(object):
@@ -228,9 +229,11 @@ class Portfolio(object):
         fout.close()
 
     def summary(self):
+        ''' short summary
         '''
-        '''
-        pass
+        pos = self.get_all_positions()
+        txt = f"Trade count: {len(pos)}"
+        return (txt)
 
 def _test1():
     d1 = datetime.date(2020, 1, 1)

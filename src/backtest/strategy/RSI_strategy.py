@@ -14,9 +14,9 @@ from datamatrix import DataMatrix, DataMatrixLoader
 class RSIStrategy(Strategy):
 
     ''' Simple Strategy based on RSI
-    1. Entry rule: long when RSI < 30, short when RSI > 70
+    1. Entry rule: long when RSI < lower_bound (default to 20), short when RSI > upper_bound (default to 80)
     2. Exit rule: Close in a week or earn a target gain percentage or sell at a max loss percentage
-    3. Capital Allocation: 1% of the capital
+    3. Capital Allocation: based on a risk allocation percentage parameter.
 
     '''
     def __init__(self, pref, input_datamatrix: DataMatrix, initial_capital: float, price_choice = cm.DataField.close,
