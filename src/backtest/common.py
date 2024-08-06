@@ -16,6 +16,9 @@ OneMillion = 1000000.0
 
 class TimeFrame(enum.Enum):
 
+    def __str__(self):
+        return(str(self.value))
+    
     DAILY = 'daily'
     ONEMIN = '1-min'
     FIVEMIN = '5-min'
@@ -23,6 +26,10 @@ class TimeFrame(enum.Enum):
     MONTHLY = 'monthly'
 
 class DataField(str, enum.Enum):
+
+    def __str__(self):
+        return(str(self.value))
+    
     open = 'Open'
     high = 'High'
     low = 'Low'
@@ -52,6 +59,10 @@ SMA_Fields_value = [DataField.SMA_10.value, DataField.SMA_20.value, DataField.SM
                   
 
 class TradeAction(enum.Enum):
+
+    def __str__(self):
+        return(str(self.value))
+    
     NONE              = ""
     BUY               = "BUY"                   # Buy shares
     SELL              = "SELL"                  # Sell shares

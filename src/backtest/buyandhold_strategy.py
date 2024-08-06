@@ -8,9 +8,8 @@ import pandas as pd
 
 
 import common as cm
-# from strategy import Strategy
-from lib.strategy import Strategy
-from lib.datamatrix import DataMatrix, DataMatrixLoader
+from strategy import Strategy
+from datamatrix import DataMatrix, DataMatrixLoader
 
 class BuyAndHoldStrategy(Strategy):
 

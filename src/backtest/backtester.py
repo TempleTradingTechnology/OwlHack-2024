@@ -5,12 +5,11 @@ Main driver class for the backtester
 
 import datetime
 
-import lib.preference
-import lib.common as cm
+import preference
+import common as cm
 
 from datamatrix import DataMatrixLoader
-
-from strategy.longindex_strategy import LongIndexStrategy
+from longindex_strategy import LongIndexStrategy
 
 class Driver(object):
 
@@ -72,7 +71,16 @@ class Driver(object):
 def _test():
     '''unit test
     '''
-    pref = preference.Preference()
+    parser = preference.get_default_parser()
+    parser.add_argument('--universe_name',   dest='universe_name', default = 'OwlHack 2024 Universe', help='Name of the Universe')
+    parser.add_argument('--initial_capital', dest='initial_capital', default = cm.OneMillion, help='Initial Capital')
+    parser.add_argument('--random_seed', dest='random_seed', default = None, type = int, help='Random Seed')    
+
+    args = parser.parse_args()
+    pref = preference.Preference(cli_args = args)
+
+    if pref.output_dir is None:
+        pref.output_dir = pref.test_output_dir
 
     driver = Driver(pref)
 

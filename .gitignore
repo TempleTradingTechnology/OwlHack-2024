@@ -13,9 +13,11 @@ __pycache__/
 *.so
 
 # test output files
-src/tests/output/*
-data/test/output/*
 data/output
+test/output/*.csv
+
+# vscode
+.vscode/*
 
 # idea
 src/.idea/

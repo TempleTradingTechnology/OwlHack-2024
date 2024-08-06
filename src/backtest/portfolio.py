@@ -2,14 +2,16 @@
 Class to model an Equity Portfolio
 '''
 
+import os
 import enum
 import datetime
 import copy
 from collections import deque
 from datetime import date
 
-import lib.common as cm
+import common as cm
 
+from preference import Preference
 
 class Position(object):
     '''
@@ -236,6 +238,8 @@ class Portfolio(object):
         return (txt)
 
 def _test1():
+
+    pref = Preference()
     d1 = datetime.date(2020, 1, 1)
     d2 = datetime.date(2020, 2, 1)
     d3 = datetime.date(2020, 3, 1)
@@ -284,7 +288,8 @@ def _test1():
     for pos in port.get_all_positions():
         print(pos)
 
-    output_fname = f"../../tests/output/{port.name}_trade_history.csv"
+    
+    output_fname = os.path.join(pref.test_output_dir, f"{port.name}_trade_history.csv")
     print("Saving trade history to ", output_fname)
     port.save_trade_history(output_fname)
 

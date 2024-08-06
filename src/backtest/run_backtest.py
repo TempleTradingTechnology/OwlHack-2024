@@ -11,7 +11,6 @@ warnings.simplefilter(action='ignore', category=FutureWarning)
 warnings.simplefilter(action='ignore', category=UserWarning)
 
 # append the lib directory to the path
-sys.path.append(os.path.join(os.path.dirname(__file__), 'lib'))
 os.environ["ROOT_DATA_DIR"] = os.path.join(os.path.dirname(__file__), os.pardir, os.pardir ,'data')
 
 
@@ -22,11 +21,7 @@ import backtester
 from datamatrix import DataMatrix, DataMatrixLoader
 
 # import the strategies
-from strategy.buyandhold_strategy import BuyAndHoldStrategy
-from strategy.RSI_strategy import RSIStrategy
-from strategy.random_strategy import RandomStrategy
-from strategy.longindex_strategy import LongIndexStrategy
-
+from strategies import *
 
 def create_strategy_list(pref, datamatrix_loader):
     result = []
@@ -52,7 +47,6 @@ def run():
     parser.add_argument('--initial_capital', dest='initial_capital', default = cm.OneMillion, help='Initial Capital')
     parser.add_argument('--random_seed', dest='random_seed', default = None, type = int, help='Random Seed')    
 
-    args = parser.parse_args()
     args = parser.parse_args()
     pref = preference.Preference(cli_args = args)
 

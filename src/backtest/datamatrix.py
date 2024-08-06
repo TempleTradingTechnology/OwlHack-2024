@@ -8,12 +8,12 @@ import copy
 import pandas as pd
 import numpy as np
 
-import lib.preference
-import lib.common as cm
+import common as cm
 
-from lib.loader import DataLoader
-from lib.stock import Stock
+from loader import DataLoader
+from stock import Stock
 
+from preference import get_default_parser, Preference
 
 class DataMatrix(pd.DataFrame):
 
@@ -129,7 +129,7 @@ class DataMatrixLoader(DataLoader):
 def _test1():
 
     print('Running Test1')
-    pref = preference.Preference()
+    pref = Preference()
     fname = os.path.join(pref.data_root_dir, 'train/AWO.csv')
     df = pd.read_csv(fname)
 
@@ -155,10 +155,10 @@ def _test1():
 def _test2():
 
     print('Running test2')
-    parser = preference.get_default_parser()
+    parser = get_default_parser()
     args = parser.parse_args()
 
-    pref = preference.Preference(cli_args = args)
+    pref = Preference(cli_args = args)
 
     universe = ['AWO', 'BDJ', 'BDTC']
     start_date = datetime.date(2010, 1, 1)
@@ -179,6 +179,7 @@ def _test2():
     dm.to_csv(output_fname)
 
     fields = [cm.DataField.close, cm.DataField.volume, cm.DataField.SMA_200, cm.DataField.daily_returns]
+    
     dm = loader.get_daily_datamatrix(fields)
     output_fname = f"C:/temp/{name}2.csv"
     print(f"Dumping output file to {output_fname}")
@@ -190,7 +191,7 @@ def _test2():
 
     
 def _test():
-    _test1()
+    #_test1()
     _test2()
     
 if __name__ == "__main__":

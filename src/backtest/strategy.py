@@ -4,10 +4,10 @@ Class to model a strategy
 import os
 import pandas as pd
 
-import lib.common as cm
+import common as cm
 
-from lib.datamatrix import DataMatrix
-from lib.portfolio import Position, Portfolio
+from datamatrix import DataMatrix
+from portfolio import Position, Portfolio
 
 class Strategy(object):
 
@@ -117,17 +117,17 @@ class Strategy(object):
         self.current_holding = (self.shares * self.tsignal).cumsum()
         self.equity_exposure = (self.current_holding * self.pricing_matrix).sum(axis = 1)
 
-        cash = self.initial_capital
+        cash_val = self.initial_capital
 
         for i in range(nrow):
             for j in range(ncol):
                 # executing trades
                 trade_amt = self.shares.iloc[i, j] * self.tsignal.iloc[i, j] * self.pricing_matrix.iloc[i, j]
-                cash = cash - trade_amt
+                cash_val = cash_val - trade_amt
 
             # assume cash grow with risk free rate
-            cash = cash * (1 + self.pref.risk_free_rate * self.days_between_periods/365)
-            self.cash[i] = cash
+            cash_val = cash_val * (1 + self.pref.risk_free_rate * self.days_between_periods/365)
+            self.cash.iloc[i] = cash_val
 
         self.pnl = pd.DataFrame(data = {'cash': self.cash, 'equity_exposure': self.equity_exposure,
                                         'total_value': self.cash + self.equity_exposure,}
@@ -166,7 +166,7 @@ class Strategy(object):
         Calculate performance stat for daily timeframe
         '''
         pnl = self.pnl[self.pnl_returns_column]
-        self.performance['Cumulative Returns'] = 100 * self.pnl['cumulative_pnl'][-1] / self.initial_capital
+        self.performance['Cumulative Returns'] = 100 * self.pnl['cumulative_pnl'].iloc[-1] / self.initial_capital
         self.performance['Maximum Drawdown'] = cm.calculate_max_drawdown(self.pnl['total_value'])
         self.performance['Sharpe Ratio'] = cm.calculate_sharpe_ratio(pnl, self.pref.risk_free_rate)
 

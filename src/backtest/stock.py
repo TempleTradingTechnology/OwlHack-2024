@@ -10,10 +10,10 @@ import datetime
 
 import pandas_ta as ta
 
-import lib.preference
 
-import lib.common as cm
-from lib.loader import DataLoader
+import common as cm
+from loader import DataLoader
+from preference import get_default_parser, Preference
 
 class Stock(object):
 
@@ -50,13 +50,17 @@ class Stock(object):
         self.ohlcv_df[cm.DataField.RSI.value] = ta.rsi(self.ohlcv_df[cm.DataField.close], timeperiod = std_rsi_period)
 
 
-    def grab_fields(self, fields = None):
+    def grab_fields(self, in_fields = None):
         '''
         grab a subset of fields and add the ticker
         '''
         output_df = pd.DataFrame(index = self.ohlcv_df.index)
-        if fields is None:
+        if in_fields is None:
             fields = self.ohlcv_df.columns
+        else:
+            # make sure the list of fields are in string format
+            fields = [str(fld) for fld in in_fields]
+            
         for fld in fields:
             output_df[f"{self.ticker}_{fld}"] = self.ohlcv_df[fld]
         return(output_df)
@@ -66,10 +70,10 @@ class Stock(object):
 
 def _test1():
 
-    parser = preference.get_default_parser()
+    parser = get_default_parser()
     args = parser.parse_args()
 
-    pref = preference.Preference(cli_args = args)
+    pref = Preference(cli_args = args)
 
     if pref.data_dir is not None:
         data_dir = pref.data_dir
@@ -97,7 +101,7 @@ def _test1():
 
     df = stock.grab_fields()
     print(df.columns)
-
+    
 def _test():
     _test1()
 

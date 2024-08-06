@@ -7,10 +7,10 @@ import datetime
 import pandas as pd
 
 
-import lib.common as cm
-from lib.strategy import Strategy
-from lib.datamatrix import DataMatrix, DataMatrixLoader
-from lib.preference import Preference
+import common as cm
+from strategy import Strategy
+from datamatrix import DataMatrix, DataMatrixLoader
+from preference import Preference
 
 class LongIndexStrategy(Strategy):
 

@@ -21,15 +21,18 @@ class Preference(object):
     if os.getenv("ROOT_DATA_DIR") is not None:
         _data_root = os.environ["ROOT_DATA_DIR"]
     else:
-        _data_root = "../../../data"
+        _data_root = "../../data"
 
+    # root directory for storing various unit and integration tests
+    _test_root = "../../test"
     _default_option = { 'environ': 'dev', 'verbose': False,
                         'start_date': None, 'end_date': None,
                         'data_root_dir': _data_root,
                         'train_data_dir': os.path.join(_data_root, 'train'),
                         'test_data_dir': os.path.join(_data_root, 'test'),
                         'meta_data_dir': os.path.join(_data_root, 'meta'),
-                        'test_output_dir': os.path.join(_data_root, 'output'),
+                        'test_input_dir': os.path.join(_test_root, 'output'),                        
+                        'test_output_dir': os.path.join(_test_root, 'output'),
                         'tickers': None, 'port_name': None,
                         'random_seed': None,
                         'risk_free_rate': 0.0,

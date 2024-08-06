@@ -8,8 +8,9 @@ import enum
 import pandas as pd
 import numpy as np
 
-import lib.preference
-import lib.common as cm
+import common as cm
+
+from preference import Preference
 
 class DataLoader(object):
 
@@ -54,7 +55,7 @@ def _test1():
 
     from pprint import pprint
     print('Running test1')
-    pref = preference.Preference()
+    pref = Preference()
     #pprint(vars(pref))
     
     loader = DataLoader(pref, data_dir = pref.train_data_dir)
