@@ -24,20 +24,20 @@ class Driver(object):
         self.datamatrix_loader = DataMatrixLoader(pref, pref.universe_name, self.universe, pref.start_date, pref.end_date)
         self.strategy_list = []
         self.run_date = None
-        
+
     def get_info(self):
         '''
         Return all the settings for this backtest
         '''
         info = self.pref.describe()
         info += f"\nRun date: {self.run_date}"
-        
+
         return(info)
-        
+
     def run(self, strategy_list):
         self.run_date = datetime.datetime.today().strftime("%Y-%m-%d %H:%M:%S")
         self.strategy_list = strategy_list
-        
+
         for strategy in strategy_list:
             strategy.validate()
             strategy.run_strategy()
@@ -58,8 +58,8 @@ class Driver(object):
         print(f"Saving results to {self.pref.output_dir}")
         buyETF.save_to_csv(self.pref.output_dir)
         print(f"\nResult for running benchmark {self.benchmark_etf}\n {buyETF.name} performance: {buyETF.performance}")
-        
-        
+
+
     def summary(self):
         '''
         print out summary of the result
@@ -67,14 +67,14 @@ class Driver(object):
         for strategy in self.strategy_list:
             print(f"\n{strategy.name} performance: {strategy.performance}")
             print(f"Trade history summary: {strategy.port.summary()}")
-            
+
 def _test():
     '''unit test
     '''
     parser = preference.get_default_parser()
     parser.add_argument('--universe_name',   dest='universe_name', default = 'OwlHack 2024 Universe', help='Name of the Universe')
     parser.add_argument('--initial_capital', dest='initial_capital', default = cm.OneMillion, help='Initial Capital')
-    parser.add_argument('--random_seed', dest='random_seed', default = None, type = int, help='Random Seed')    
+    parser.add_argument('--random_seed', dest='random_seed', default = None, type = int, help='Random Seed')
 
     args = parser.parse_args()
     pref = preference.Preference(cli_args = args)
@@ -84,10 +84,10 @@ def _test():
 
     driver = Driver(pref)
 
-    
+
 if __name__ == '__main__':
     _test()
-        
 
 
-    
+
+

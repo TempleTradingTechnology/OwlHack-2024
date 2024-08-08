@@ -14,11 +14,11 @@ class Strategy(object):
     '''
     Strategy uses DataMatrix as both the input as well as the output
     1. The output is a DataMatrix with columns as the trade signal for each ticker
-         positive shares means buy, negative shares means sell, 0 means hold
+        positive shares means buy, negative shares means sell, 0 means hold
     2. Each strategy requires an input DataMatrix expected by the strategy
     3. Strategy can be rules based such as buy when SMA_10 cross above SMA_20
        or it has a internal model that makes a certain forecast and the strategy will make its recommendation
-       based on the model output. It works with 3 datamtrix
+       based on the model output. It works with 3 datamatrix
 
        a. input_datamatrix with everything needed for generating a trade signal.
        b. trade signal datamatrix which is the output of the strategy, long or short
@@ -68,7 +68,7 @@ class Strategy(object):
 
         # specify name of the column for storing pnl returns for each period
         self.pnl_returns_column = f"{self.timeframe.value} pnl returns"
-        
+
         # output of the strategy
         self.pnl = pd.DataFrame(index = input_datamatrix.index)
         self.performance = {'Cumulative Returns': -999,
@@ -182,8 +182,10 @@ class Strategy(object):
         '''
         Save strategy output to csv file
         '''
+
         if not os.path.exists(output_dir):
-            os.mkdir(output_dir)
+            os.makedirs(output_dir, exist_ok=True)
+
 
         fname = self.name.replace(' ', '')
         self.input_dm.to_csv(os.path.join(output_dir, f"{fname}_data.csv"))

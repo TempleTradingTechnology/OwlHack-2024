@@ -21,17 +21,17 @@ class Preference(object):
     if os.getenv("ROOT_DATA_DIR") is not None:
         _data_root = os.environ["ROOT_DATA_DIR"]
     else:
-        _data_root = "../../data"
+        _data_root = os.path.join(os.pardir, os.pardir ,'data')
 
     # root directory for storing various unit and integration tests
-    _test_root = "../../test"
+    _test_root = os.path.join(os.pardir, os.pardir ,'test')
     _default_option = { 'environ': 'dev', 'verbose': False,
                         'start_date': None, 'end_date': None,
                         'data_root_dir': _data_root,
                         'train_data_dir': os.path.join(_data_root, 'train'),
                         'test_data_dir': os.path.join(_data_root, 'test'),
                         'meta_data_dir': os.path.join(_data_root, 'meta'),
-                        'test_input_dir': os.path.join(_test_root, 'output'),                        
+                        'test_input_dir': os.path.join(_test_root, 'output'),
                         'test_output_dir': os.path.join(_test_root, 'output'),
                         'tickers': None, 'port_name': None,
                         'random_seed': None,
@@ -98,7 +98,7 @@ def _test1():
     pref = Preference()
     pprint(vars(pref))
 
-    pref = Preference(name = "yahoo applicaiton",  user = "John Doe")
+    pref = Preference(name = "yahoo application",  user = "John Doe")
     pprint(vars(pref))
 
     parser = get_default_parser()

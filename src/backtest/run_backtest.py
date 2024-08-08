@@ -37,7 +37,7 @@ def create_strategy_list(pref, datamatrix_loader):
 
     random = RandomStrategy(pref, dm, pref.initial_capital, lower_bound = 0.1, upper_bound = 0.9)
     result.append(random)
-    
+
     return(result)
 
 def run():
@@ -45,7 +45,7 @@ def run():
     parser = preference.get_default_parser()
     parser.add_argument('--universe_name',   dest='universe_name', default = 'OwlHack 2024 Universe', help='Name of the Universe')
     parser.add_argument('--initial_capital', dest='initial_capital', default = cm.OneMillion, help='Initial Capital')
-    parser.add_argument('--random_seed', dest='random_seed', default = None, type = int, help='Random Seed')    
+    parser.add_argument('--random_seed', dest='random_seed', default = None, type = int, help='Random Seed')
 
     args = parser.parse_args()
     pref = preference.Preference(cli_args = args)
